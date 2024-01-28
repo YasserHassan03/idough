@@ -1,9 +1,8 @@
 import time
 import smbus2
-import threading
+import requests as r
 
 class MySensor:
-    
     def __init__(self, address=0x40): # default temperature master hold
         self.add = address
         self.tempCommand = 0xe3 # Temperature, Master No Hold
@@ -34,13 +33,17 @@ class MySensor:
            
             
 def main():
+    url = ""
+    samplingTime = 0.1
     sensor = MySensor()
     while True:
         temp, rh = sensor.read()
         print(f'temp:{temp}, humidity:{rh}')
-
-        time.sleep(0.05)
-
+        backPressure = r.post(url=url, data={"temp":temp, "humid":rh}) 
+        
+        #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server   
+        
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
