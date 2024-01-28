@@ -12,3 +12,5 @@ Omar
 - [ ] transmission and client-server arrangement
 
 James - Look out bread specific stuff (type of bread, target humidity, temp, how these affect rate for prediction) find suitable sensor and test (ultrasound vs TOF) - consider heating element for temperature control.
+
+- [ ] Figure out what the network will look like with (aws/firebase/whatever we wanna use), website and rp and assign them to ppl.
