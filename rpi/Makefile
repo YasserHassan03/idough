@@ -6,10 +6,7 @@ PASSWORD=asdfghjkl
 
 .PHONY: send all
 
-all:
-	python src/main.py
-
-run: send src/main.py
+all: send src/main.py
 	sshpass -p $(PASSWORD) ssh $(HOST) -t "python main.py" 
 
 send: src/main.py
