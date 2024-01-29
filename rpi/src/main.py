@@ -1,6 +1,12 @@
 import time
 import smbus2
 import requests as r
+import board
+import busio
+import adafruit_vl53l0x
+i2c = busio.I2C(board.SCL, board.SDA)
+sensor = adafruit_vl53l0x.VL53L0X(i2c)
+
 
 class Temp_Humid_Sensor:
     def __init__(self, address=0x40): # default temperature master hold
@@ -41,37 +47,30 @@ class Gas_Sensor:
 
     def read_ccs811_data(self):
     # Check if data is ready
-        ready = self.bus.read_byte_data(self.add, self.status)
-        if ready & (1 << 3):  # Bit 3 indicates data ready
-            # Read the data
-            data = self.bus.read_i2c_block_data(self.add, self.result, 8)  
-            # Process the data
-            co2 = (data[0] << 8) | data[1]
-            tvoc = (data[2] << 8) | data[3]
-            return co2, tvoc
-        else:
-            return None
+        # Read the data
+        data = self.bus.read_i2c_block_data(self.add, self.result, 8)  
+        # Process the data
+        co2 = (data[0] << 8) + data[1]
+        tvoc = (data[2] << 8) | data[3]
+        return co2, tvoc
 
 
             
 def main():
     url = ""
     samplingTime = 0.1
-    T_H_sensor = Temp_Humid_Sensor()
-    Gas_Sensor = Gas_Sensor()
+    #T_H_sensor = Temp_Humid_Sensor()
+    G_Sensor = Gas_Sensor()
     while True:
-        temp, rh = T_H_sensor.read()
-        print(f'temp:{temp}, humidity:{rh}')
-        co2, tvoc = Gas_Sensor.read_ccs811_data()
-        print(f'co2:{co2}, tvoc:{tvoc}')
+        #temp, rh = T_H_sensor.read()
+        #print(f'temp:{temp}, humidity:{rh}')
+        #co2,tvoc = G_Sensor.read_ccs811_data()
+        #print(f'co2:{co2}, tvoc:{tvoc}')
         # backPressure = r.post(url=url, data={"temp":temp, "humid":rh}) 
-        
+        print('Range: {}mm'.format(sensor.range))
         #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server   
         
         time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
-
-
-
