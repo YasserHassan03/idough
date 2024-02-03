@@ -15,7 +15,7 @@ class Temp_Humid_Sensor:
         self.humidityCommand = 0xe5 # Relative Humidity, Master No Hold
         self.bus = smbus2.SMBus(1)
     
-    def read(self):
+    def read_temp(self):
         self._updateSensor(self.tempCommand)
         temperatureReading = self._getReading(2)
         self._updateSensor(self.humidityCommand)
@@ -37,40 +37,36 @@ class Temp_Humid_Sensor:
         cmd_meas = smbus2.i2c_msg.write(self.add, [command])
         self.bus.i2c_rdwr(cmd_meas)
 
-class Gas_Sensor:
+class Gas_Sensor(Temp_Humid_Sensor):
     def __init__(self, address=0x5A):
-        self.add = address
+        self.add = address #I2C abed zunji address
         self.status = 0x00
-        self.mode = 0x01
+        self.mode = 0x01 #default drive mode read every second
         self.result = 0x02
+        self.env = 0x05
         self.bus = smbus2.SMBus(1)
+        self.eCO2 = None #pp2
+        self.data_ready = None
+        self.error = None
+        #don't care about volatile compunds
+        #self.bus.write_byte_data(self.add, 0xf4)#start firmware
+        cmd = smbus2.i2c_msg.write(self.add, [0xf4])
+        self.bus.i2c_rdwr(cmd)
+        time.sleep(0.1)      
+        if self.bus.read_byte_data(self.add, self.status) & 0x80:
+            print('Gas sensor started successfully')
 
-    def read_ccs811_data(self):
-    # Check if data is ready
-        # Read the data
-        data = self.bus.read_i2c_block_data(self.add, self.result, 8)  
-        # Process the data
-        co2 = (data[0] << 8) + data[1]
-        tvoc = (data[2] << 8) | data[3]
-        return co2, tvoc
-
-
+    def check_data(self):
+        self.data_ready = self.bus.read_byte_data(self.add, self.status) & 0x08
+        #print(self.data_ready)
+    def check_error(self):
+        self.error = self.bus.read_byte_data(self.add, self.status) & 0x01
+ 
+    def read_CO2(self):
+        self.check_error()
+        self.check_data()
+        if self.data_ready:
+            CO2_data = (self.bus.read_word_data(self.add, self.result)).to_bytes(2, 'big')
+            self._eco2 = (CO2_data[0] << 8) | (CO2_data[1])
+        return self.eCO2
             
-def main():
-    url = ""
-    samplingTime = 0.1
-    #T_H_sensor = Temp_Humid_Sensor()
-    G_Sensor = Gas_Sensor()
-    while True:
-        #temp, rh = T_H_sensor.read()
-        #print(f'temp:{temp}, humidity:{rh}')
-        #co2,tvoc = G_Sensor.read_ccs811_data()
-        #print(f'co2:{co2}, tvoc:{tvoc}')
-        # backPressure = r.post(url=url, data={"temp":temp, "humid":rh}) 
-        print('Range: {}mm'.format(sensor.range))
-        #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server   
-        
-        time.sleep(0.1)
-
-if __name__ == "__main__":
-    main()
