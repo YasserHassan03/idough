@@ -1,6 +1,9 @@
 import time
 import smbus2
 import requests as r
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
 
 class MySensor:
     def __init__(self, address=0x40): # default temperature master hold
@@ -31,19 +34,23 @@ class MySensor:
         cmd_meas = smbus2.i2c_msg.write(self.add, [command])
         self.bus.i2c_rdwr(cmd_meas)
            
-            
 def main():
-    url = ""
-    samplingTime = 0.1
+    url = "https://ec2-52-90-198-47.compute-1.amazonaws.com:5000/"
+    # res = r.get(url, verify='./certificate.crt') 
+    samplingTime = 1
     sensor = MySensor()
     while True:
         temp, rh = sensor.read()
+        # temp, rh = 1, 2
         print(f'temp:{temp}, humidity:{rh}')
-        # backPressure = r.post(url=url, data={"temp":temp, "humid":rh}) 
-        
-        #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server   
-        
-        time.sleep(0.1)
+        backPressure = r.post(url=url+"/", json={"temp":temp, "humid":rh}, verify='./certificate.crt')
+        data = backPressure.json()
+        samplingTime = data['sampling']
+        print(f'response: {data}')
+
+        #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server
+
+        time.sleep(samplingTime)
 
 if __name__ == "__main__":
     main()
