@@ -1,21 +1,18 @@
-from flask import Flask,request, jsonify 
+from flask import Flask, request 
 
 app = Flask(__name__)
 
 @app.route('/pause')
 def hello():
-        return 'Hello World!'
+    return 'Hello World!'
+
 
 @app.route('/', methods=['POST','GET'])
 def json():
-        #title = request.json()
-        #content = request.json['content']
-        data = request.json
-        print(data['temp'])
-        data= 1
-        return jsonify(data)
+    data = request.json
+    print(data)
+    return {"sampling": 2}
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=('assets/certificate.crt','assets/privateKey.key'))
-
+    app.run(host='0.0.0.0', debug=True, ssl_context=('certificate.crt', 'privateKey.key'))
 
