@@ -1,9 +1,4 @@
 from flask import Flask,request, jsonify 
-from OpenSSL import SSL
-
-context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
-context.use_privatekey_file('/assets/privateKey.key')
-context.use_certificate_file('/assets/certificate.crt')  
 
 app = Flask(__name__)
 
@@ -21,6 +16,6 @@ def json():
         return jsonify(data)
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=context)
+        app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=('assets/certificate.crt','assets/privateKey.key'))
 
 
