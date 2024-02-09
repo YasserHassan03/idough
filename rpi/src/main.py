@@ -4,8 +4,9 @@ import requests as r
 import board
 import busio
 import adafruit_vl53l0x
+
 i2c = busio.I2C(board.SCL, board.SDA)
-sensor = adafruit_vl53l0x.VL53L0X(i2c)
+tofSensor = adafruit_vl53l0x.VL53L0X(i2c)
 
 import urllib3
 
@@ -18,7 +19,7 @@ class MySensor:
         self.humidityCommand = 0xe5 # Relative Humidity, Master No Hold
         self.bus = smbus2.SMBus(1)
     
-    def read_temp(self):
+    def read(self):
         self._updateSensor(self.tempCommand)
         temperatureReading = self._getReading(2)
         self._updateSensor(self.humidityCommand)
@@ -42,19 +43,21 @@ class MySensor:
            
 def main():
     url = "https://ec2-52-90-198-47.compute-1.amazonaws.com:5000/"
-    # res = r.get(url, verify='./certificate.crt') 
     samplingTime = 1
     sensor = MySensor()
+    tofReading = tofSensor.range
+
     while True:
         temp, rh = sensor.read()
-        # temp, rh = 1, 2
+
+        data = {"temp":temp, "humid":rh, "tof":tofReading, "samplingTime":samplingTime}
         print(f'temp:{temp}, humidity:{rh}')
-        backPressure = r.post(url=url+"/", json={"temp":temp, "humid":rh}, verify='./certificate.crt')
+        backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
+
         data = backPressure.json()
         samplingTime = data['sampling']
         print(f'response: {data}')
 
-        #TODO: If needed, implement back pressure, i.e make sample time inversly proportional to value obtained from server
 
         time.sleep(samplingTime)
 
