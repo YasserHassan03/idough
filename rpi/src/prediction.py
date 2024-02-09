@@ -1,9 +1,9 @@
 import numpy as np
 from collections import deque
-import requests
-import random
-import time
-
+# import requests
+# import random
+# import time
+#
 class breadPredictor:
     def __init__(self, recipeTime=120, bowlHeight=250, targetGrowth=2, yeast=3, salt=6, flour=500, water=350):
 
@@ -77,7 +77,7 @@ class breadPredictor:
                 return 0 #bread is already reached max
         
     def insertData(self, distance, temp, humid):
-        self.height.append(self.calculateHeight(distance))
+        self.height.append(self.calulateHeight(distance))
         self.temp.append(temp)
         self.humid.append(humid)
         return True
