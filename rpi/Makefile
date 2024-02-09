@@ -1,4 +1,4 @@
-IP=146.169.154.110
+IP=146.169.152.36
 HOST=pi@$(IP)
 DST=$(HOST):/home/pi
 PASSWORD=asdfghjkl
