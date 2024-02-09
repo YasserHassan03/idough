@@ -1,0 +1,90 @@
+/* FILEPATH: /Users/yasserhassan/Desktop/UNI/bread/Bread_box/website/bread/src/app/home/home.component.css */
+
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: black;
+}
+
+/* Set a background color */
+body {
+  background-color: black;
+}
+
+/* Center the content */
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  margin-top: 5vw;
+}
+.page{
+  margin-bottom: 5vw;
+}
+
+/* Style the heading */
+h1 {
+  font-size: 48px;
+  color: white;
+  text-align: center;
+  margin-left: 15vw;
+  margin-bottom: 20px;
+}
+
+/* Style the paragraph */
+.subtitle{
+  font-size: 32px;
+  color: white;
+  text-align: center;
+  margin-left: 15vw;
+  margin-bottom: 40px;
+}
+.product{
+  display: flex;
+  margin-top: 5vw;
+}
+.Header {
+  display: flex;
+  color: white;
+  font-size: 40px;
+  margin-left: 15vw;
+  max-width: 9vw;
+  position: relative; /* Required for positioning pseudo-element */
+}
+.Header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -10px; /* Adjust the distance of the line from the header */
+  height: 100%;
+  width: 2px; /* Width of the silver line */
+  background-color: silver; /* Color of the silver line */
+}
+.vision{
+  display: grid;
+  width: 20vw;
+}
+
+.bigwords{
+  color: white;
+  font-size: 28px;
+  text-align: center;
+  margin-left: 2vw;
+  margin-top: 10vw; 
+  display: block;
+}
+.paragraph{
+  color: white;
+  font-size: 20px;
+  margin-left: 2vw;
+  margin-right: 2vw;
+  margin-top: 2vw;
+  display: block;
+}
+.image{
+  margin-left: 12vw;
+  margin-top: 3vw;
+}
+/* Style the button */

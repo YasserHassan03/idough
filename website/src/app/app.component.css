@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    height: 100vh; 
+    background-color: black;/* Set the container to take up the full height of the viewport */
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    position: fixed; /* Position the sidebar fixed */
+    top: 0; /* Align the sidebar to the top of the viewport */
+    left: 0; /* Align the sidebar to the left of the viewport */
+    bottom: 0; /* Align the sidebar to the bottom of the viewport */
+    overflow-y: auto; /* Allow the sidebar to scroll if content exceeds viewport height */
+    display: flex; /* Use flexbox for centering */
+    flex-direction: column; /* Align items vertically */
+    justify-content: center; /* Center the items vertically */
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Allow the content area to scroll if content exceeds viewport height */
+  }
+  
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    margin-bottom: 50px;
+    margin-left: 50px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: x-large;
+  }
+  
+  nav ul li a:hover {
+    color: #4caf50;
+  }
+  
