@@ -1,6 +1,12 @@
 import time
 import smbus2
 import requests as r
+import board
+import busio
+import adafruit_vl53l0x
+i2c = busio.I2C(board.SCL, board.SDA)
+sensor = adafruit_vl53l0x.VL53L0X(i2c)
+
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
@@ -12,7 +18,7 @@ class MySensor:
         self.humidityCommand = 0xe5 # Relative Humidity, Master No Hold
         self.bus = smbus2.SMBus(1)
     
-    def read(self):
+    def read_temp(self):
         self._updateSensor(self.tempCommand)
         temperatureReading = self._getReading(2)
         self._updateSensor(self.humidityCommand)
