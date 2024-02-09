@@ -34,7 +34,6 @@ class breadPredictor:
     def predictTime(self):
         if self.done: #bread is done
             self.timeForecast = 0
-            return 0
         self.timeForecast = 0.3*self.tempWeight() + 0.1*self.humidWeight() + 0.4*self.heightWeight() + 0.2*self.recipeWeight()
         return self.timeForecast
     
@@ -68,13 +67,13 @@ class breadPredictor:
         else:
             self.gradCalc()
             curGrowthRate = self.growthRate[-1] #growth rate in mm/s
-            if self.height[-1] < self.bowlHeight: 
-                targetHeight = max(self.height[0]*self.targetGrowth,self.bowlHeight)
-                timeLeft = (targetHeight-self.height[-1])/curGrowthRate #in seconds
-                return timeLeft/60 #in minutes
+            if curGrowthRate>0:
+                if self.height[-1] < self.bowlHeight: 
+                    targetHeight = max(self.height[0]*self.targetGrowth,self.bowlHeight)
+                    timeLeft = (targetHeight-self.height[-1])/curGrowthRate #in seconds
+                    return timeLeft/60 #in minutes
             else:
-                self.done=True
-                return 0 #bread is already reached max
+                return self.recipeTime+self.recipeTime*1.001 #dough not growing right now
         
     def insertData(self, distance, temp, humid):
         self.height.append(self.calulateHeight(distance))
