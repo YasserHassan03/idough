@@ -23,6 +23,9 @@ class breadPredictor:
         self.heightWarning = False
         self.done = False
 
+    def getWarning(self):
+        return self.tempWarning, self.humidWarning, self.heightWarning
+    
     def calulateHeight(self,distance):
         return self.bowlHeight - distance
     
@@ -49,11 +52,12 @@ class breadPredictor:
     
     def humidWeight(self):
         curHumid = self.humid[-1]
-        if curHumid<=80:
+        if curHumid<=80 and curHumid>20:
             return self.recipeTime/(curHumid*1/80)
         elif curHumid>80:
             return self.recipeTime/((-curHumid*0.1/20)+1.4)
         else:
+            self.humidWarning = True #humidity out of range for bread making
             return self.recipeTime  #humidity out of ideal range for bread making doesn't make huge difference
         
     def heightWeight(self):
