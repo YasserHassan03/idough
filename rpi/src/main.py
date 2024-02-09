@@ -5,12 +5,10 @@ import board
 import busio
 import adafruit_vl53l0x
 
-i2c = busio.I2C(board.SCL, board.SDA)
-tofSensor = adafruit_vl53l0x.VL53L0X(i2c)
-
 import urllib3
 
-urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
+# urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
+urllib3.disable_warnings()
 
 class MySensor:
     def __init__(self, address=0x40): # default temperature master hold
@@ -42,17 +40,23 @@ class MySensor:
         self.bus.i2c_rdwr(cmd_meas)
            
 def main():
-    url = "https://ec2-52-90-198-47.compute-1.amazonaws.com:5000/"
+    url = "https://ec2-34-207-250-127.compute-1.amazonaws.com:5000/"
     samplingTime = 1
+
+    i2c = busio.I2C(board.SCL, board.SDA)
+    tofSensor = adafruit_vl53l0x.VL53L0X(i2c)
+    
     sensor = MySensor()
-    tofReading = tofSensor.range
+    # tofReading = 4
 
     while True:
+        tofReading = tofSensor.range    
         temp, rh = sensor.read()
 
-        data = {"temp":temp, "humid":rh, "tof":tofReading, "samplingTime":samplingTime}
-        print(f'temp:{temp}, humidity:{rh}')
-        backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
+        data = {"temp":temp, "humid":rh, "tof":tofReading, "sampling":samplingTime}
+        print(f'temp:{temp}, humidity:{rh}, tof:{tofReading}')
+        # backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
+        backPressure = r.post(url=url+"/sensors", json=data, verify=False)
 
         data = backPressure.json()
         samplingTime = data['sampling']
