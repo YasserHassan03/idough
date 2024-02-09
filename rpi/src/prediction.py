@@ -87,3 +87,12 @@ class breadPredictor:
             self.growthRate=np.gradient(self.height)
         return self.growthRate
 
+def main():
+    proofingTime = breadPredictor()
+    while True:
+        dataPacket=[distance,temp,humid]#receive data packet 
+        proofingTime.insertData(dataPacket)
+        timeRemaining = proofingTime.predictTime()#predict time remaining
+
+if __name__ == "__main__":
+    main()
