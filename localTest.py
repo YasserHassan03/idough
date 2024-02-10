@@ -1,8 +1,11 @@
 import numpy as np
 from collections import deque
-# import requests
-# import random
-# import time
+import time
+import smbus2
+import requests as r
+import board
+import busio
+import adafruit_vl53l0x
 #
 class breadPredictor:
     def __init__(self, recipeTime=120, bowlHeight=250, targetGrowth=2, yeast=3, salt=6, flour=500, water=350):
@@ -62,7 +65,7 @@ class breadPredictor:
             return self.recipeTime  # humidity out of ideal range for bread making doesn't make huge difference
 
     def heightWeight(self): #fix this u rat
-        curSampleTime = self.sampleTime
+        curSampleTime = self.sampleTime  
         if self.height[0] * self.targetGrowth > self.bowlHeight:
             self.heightWarning = True  # bread is too big for bowl
         if len(self.height) < 2:
@@ -95,13 +98,54 @@ class breadPredictor:
         return self.growthRate
 
 
+class MySensor:
+    def __init__(self, address=0x40): # default temperature master hold
+        self.add = address
+        self.tempCommand = 0xe3 # Temperature, Master No Hold
+        self.humidityCommand = 0xe5 # Relative Humidity, Master No Hold
+        self.bus = smbus2.SMBus(1)
+    
+    def read(self):
+        self._updateSensor(self.tempCommand)
+        temperatureReading = self._getReading(2)
+        self._updateSensor(self.humidityCommand)
+        humidityReading = self._getReading(1)
+        return self._convertToCelcius(temperatureReading), self._convertToRH(humidityReading)
 
-# def main():
-#     proofingTime = breadPredictor()
-#     while True:
-#         dataPacket=[distance,temp,humid]#receive data packet 
-#         proofingTime.insertData(dataPacket)
-#         timeRemaining = proofingTime.predictTime()#predict time remaining
-#
-# if __name__ == "__main__":
-#     main()
+    def _getReading(self, sensor):
+        result = smbus2.i2c_msg.read(self.add, sensor)
+        self.bus.i2c_rdwr(result)
+        return int.from_bytes(result.buf[0] + result.buf[1], 'big')
+        
+    def _convertToRH(self, reading):
+        return ((125 * reading) / 65536) - 6
+
+    def _convertToCelcius(self, reading):
+        return ((175.72 * reading) / 65536) - 46.85
+
+    def _updateSensor(self, command):
+        cmd_meas = smbus2.i2c_msg.write(self.add, [command])
+        self.bus.i2c_rdwr(cmd_meas)
+           
+def main():
+    predictor = breadPredictor()
+    samplingTime = 1
+    i2c = busio.I2C(board.SCL, board.SDA)
+    tofSensor = adafruit_vl53l0x.VL53L0X(i2c)   
+    sensor = MySensor()
+    while True:
+        tofReading = tofSensor.range    
+        temp, rh = sensor.read()
+        print(f'temp:{temp}, humidity:{rh}, tof:{tofReading}')
+        predictor.insertData(distance=tofReading, temp=temp, humid=rh) 
+        timeRemaining = predictor.predictTime()
+        print(f'Time Remaining: {timeRemaining}')
+        print(f'Height {predictor.height}')
+        print(f'Derivative {predictor.growthRate}')
+        print(f'Weights: temp {predictor.tempWeight()}, humid {predictor.humidWeight()},height {predictor.heightWeight()}')
+
+        time.sleep(samplingTime)
+
+if __name__ == "__main__":
+    main()
+
