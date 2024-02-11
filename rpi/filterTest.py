@@ -39,6 +39,7 @@ def main():
         print(f'y: {y}') 
         means.append(y[0])
 
+
     print(f'Means: {means}')
     plt.plot(means)
     plt.plot(readings)
