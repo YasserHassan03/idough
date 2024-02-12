@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1>Welcome to your Dashboard</h1>
+    <p>Registered Raspberry Pis:</p>
+    <ul>
+    {% for raspberry in user_raspberries %}
+        <li>{{ raspberry.id }} - Microservice Port: {{ raspberry.microservice_port }}</li>
+    {% empty %}
+        <li>No Raspberry Pis registered</li>
+    {% endfor %}
+    </ul>
+    <p>Temperature: {{ temperature }}</p>
+    <p>Proximity: {{ proximity }}</p>
+    <p>Time: {{ current_time }}</p>
+    <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
+    <a href="{% url 'default_route' %}">Back to iDough</a>
+    <form method="POST" action="{% url 'start_subprocess' %}">
+        {% csrf_token %}
+        <input type="hidden" name="microservice_port" value="your_port_value">
+        <button type="submit">Start subprocess</button>
+    </form>
+</body>
+</html>
