@@ -7,6 +7,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('home/', views.home, name='home'),
     path('register_raspberry/', views.register_raspberry, name='register_raspberry'),
-    path('get_microservice_port/<str:raspberry_id>/', views.get_microservice_port, name='get_microservice_port'),
-    path('start_subprocess/', views.start_subprocess, name='start_subprocess')
+    path('pid_register/<str:raspberry_id>/', views.pid_register, name='pid_register'),
+    # path('start_subprocess/', views.start_subprocess, name='start_subprocess'),
+    path('sensors/', views.sensors, name='sensors')
 ]

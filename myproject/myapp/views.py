@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
 import subprocess
+import breadPredictor
+
+map_user_to_object = {}
 
 def register(request):
     if request.method == 'POST':
@@ -32,52 +35,68 @@ def user_login(request):
 
 @login_required
 def home(request):
-    temperature = 25.5
-    proximity = 10
-    current_time = 80
     user_raspberries = RaspberryPi.objects.filter(user=request.user)
 
     context = {
-        'temperature': temperature,
-        'proximity': proximity,
-        'current_time': current_time,
+        'temp': "---",
+        'humid': "---",
+        'tof': "---",
+        'sampling': "---",
         'user_raspberries': user_raspberries
     }
     
-    return render(request, 'home.html', context)
+    return render(request, 'home.html')
 
 @login_required
 def register_raspberry(request):
     if request.method == 'POST':
         raspberry_id = request.POST.get('raspberry_id')
-        microservice_port = request.POST.get('microservice_port')
         raspberry = RaspberryPi.objects.filter(id=raspberry_id).first()
         if not raspberry:
             return render(request, 'registration/register_raspberry.html', {'error': 'Invalid Raspberry Pi ID'})
         if raspberry.user:
             return render(request, 'registration/register_raspberry.html', {'error': 'Raspberry Pi already registered'})
         raspberry.user = request.user
-        if microservice_port is not None:
-            raspberry.microservice_port = microservice_port
         raspberry.save()
         return redirect('home')
     else:
         return render(request, 'registration/register_raspberry.html')
 
-def start_subprocess(request):
-    microservice_port = request.POST.get('microservice_port')
-    subprocess.Popen(["python3", "../AWS-Stuff/app.py", str(microservice_port)])
-    return redirect('home')  # replace 'home' with the name of your home view
-
-def get_microservice_port(request, raspberry_id):
+def pid_register(request, raspberry_id):
     try:
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
-        if raspberry_pi.microservice_port is None:
-            return JsonResponse({'error': 'Microservice port is not set'})
-        return JsonResponse({'microservice_port': raspberry_pi.microservice_port})
+        if raspberry_pi.user is None:
+            return HttpResponseForbidden({'error': 'Raspberry Pi user not found'})
+        map_user_to_object[raspberry_pi.user] = breadPredictor.BreadPredictor()
+        return JsonResponse({'success': "Raspberry Pi user found"})
+    
     except RaspberryPi.DoesNotExist:
-        return JsonResponse({'error': 'Raspberry Pi not found'})
+        return HttpResponseForbidden({'error': 'Raspberry Pi not found'})
+    
+def sensors(request):
+    if request.method == 'POST':
+        temperature = request.POST.get('temp')
+        humidity = request.POST.get('humid')
+        proximity = request.POST.get('tof')
+        current_time = request.POST.get('sampling')
+        pid = request.POST.get('pid')
+        user_raspberries = RaspberryPi.objects.filter(user=request.user)
+        raspberry_pi = RaspberryPi.objects.get(id=pid)
+        user = raspberry_pi.user if raspberry_pi else None
+
+    context = {
+        'temp': temperature,
+        'humid': humidity,
+        'tof': proximity,
+        'sampling': current_time,
+        'user_raspberries': user_raspberries
+    }
+
+    render(request, "home.html", context)
 
 def default_route(request):
     return render(request, 'default_route.html')
+
+
+
 
