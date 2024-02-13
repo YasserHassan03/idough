@@ -37,15 +37,6 @@ def user_login(request):
 @login_required
 def home(request):
     user_raspberries = RaspberryPi.objects.filter(user=request.user)
-
-    context = {
-        'temp': "---",
-        'humid': "---",
-        'tof': "---",
-        'sampling': "---",
-        'user_raspberries': user_raspberries
-    }
-    
     return render(request, 'home.html')
 
 @login_required
@@ -106,6 +97,16 @@ def end(request):
     raspberry_pi.start = False
     raspberry_pi.save()
     return render(request, 'home.html')
+
+def poll_data(request):
+    raspberry_pi = RaspberryPi.objects.get(user=request.user)
+    user = raspberry_pi.user 
+    started = raspberry_pi.start
+    if user in map_user_to_object and started:
+        predictor_obj = map_user_to_object[user]
+        tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
+        return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof})
+    return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---'})
 
 def default_route(request):
     return render(request, 'default_route.html')

@@ -90,29 +90,35 @@
 <body>
     <h1>Welcome to your Dashboard</h1>
     <div class="boxes">
-        <div class="box">
-            <p>Registered Raspberry Pis:</p>
-            <ul>
-                {% for raspberry in user_raspberries %}
-                <li>{{ raspberry.id }} - Microservice Port: {{ raspberry.microservice_port }}</li>
-                {% empty %}
-                <li>No Raspberry Pis registered</li>
-                {% endfor %}
-            </ul>
+        <div class="box" >
+            <p>Temperature: <span id="temp">{{ temp }}</span></p>
         </div>
         <div class="box">
-            <p>Temperature: {{ temp }}</p>
+            <p>Proximity: <span id="tof">{{ tof }}</span></p>
         </div>
         <div class="box">
-            <p>Proximity: {{ tof }}</p>
-        </div>
-        <div class="box">
-            <p>Time: {{ sampling }}</p>
-        </div>
-        <div class="box">
-            <p>Humidity: {{ humid }}</p>
+            <p>Humidity: <span id="humid">{{ humid }}</span></p>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    setInterval(function() {
+        $.ajax({
+            url: '/poll_data',  
+            type: 'GET',
+            success: function(data) {
+                $('#temp').text(data.temp);
+                $('#tof').text(data.tof);
+                $('#humid').text(data.humid);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }, 2000); 
+    </script>
+    
     <div class="return">
         <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
         <a href="{% url 'default_route' %}">Back to iDough</a>
