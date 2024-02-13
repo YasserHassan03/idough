@@ -104,8 +104,11 @@ def poll_data(request):
     started = raspberry_pi.start
     if user in map_user_to_object and started:
         predictor_obj = map_user_to_object[user]
-        tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
-        return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof})
+        if len(predictor_obj.height) > 0 and  len(predictor_obj.temp)> 0 and len(predictor_obj.humid) > 0:
+            tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
+            return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof})
+        else:
+            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---'})
     return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---'})
 
 def default_route(request):
