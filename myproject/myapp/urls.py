@@ -9,5 +9,8 @@ urlpatterns = [
     path('register_raspberry/', views.register_raspberry, name='register_raspberry'),
     path('pid_register/<str:raspberry_id>/', views.pid_register, name='pid_register'),
     # path('start_subprocess/', views.start_subprocess, name='start_subprocess'),
-    path('sensors/', views.sensors, name='sensors')
+    path('poll_data/', views.poll_data, name='poll_data'),
+    path('sensors/', views.sensors, name='sensors'),
+    path('start/', views.start, name='start'),
+    path('end/', views.end, name='end'),
 ]

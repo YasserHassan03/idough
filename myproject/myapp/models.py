@@ -8,6 +8,7 @@ class RaspberryPi(models.Model):
     id = models.TextField(max_length=50, primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     microservice_port = models.IntegerField(null=True, blank=True)
+    start = models.BooleanField(default=False)
 
     def __str__(self):
         return self.id
