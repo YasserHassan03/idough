@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
 import subprocess
-import breadPredictor
+from breadPredictor import BreadPredictor
 
 map_user_to_object = {}
 
@@ -68,7 +68,7 @@ def pid_register(request, raspberry_id):
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
         if raspberry_pi.user is None:
             return HttpResponseForbidden({'error': 'Raspberry Pi user not found'})
-        map_user_to_object[raspberry_pi.user] = breadPredictor.breadPredictor()
+        map_user_to_object[raspberry_pi.user] = BreadPredictor()
         return JsonResponse({'success': "Raspberry Pi user found"})
     except RaspberryPi.DoesNotExist:
         return HttpResponseForbidden({'error': 'Raspberry Pi not found'})
@@ -81,13 +81,15 @@ def sensors(request):
         proximity = request.POST.get('tof')
         sampling_time = request.POST.get('sampling')
         pid = request.POST.get('pid')
-        print(f'pId: {pid}, type: {type(pid)}')
+        # print(f'pId: {pid}, type: {type(pid)}')
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
         started = raspberry_pi.start
 
+    # print(f'Started: {started}')
+
     if started:
-        map_user_to_object[user].insertData(temperature, humidity, proximity)
+        map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
    
     return JsonResponse({"sampling": sampling_time})
 
