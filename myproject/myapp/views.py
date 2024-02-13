@@ -69,7 +69,7 @@ def pid_register(request, raspberry_id):
         if raspberry_pi.user is None:
             return HttpResponseForbidden({'error': 'Raspberry Pi user not found'})
         map_user_to_object[raspberry_pi.user] = breadPredictor.breadPredictor()
-        return JsonResponse({'success': "Raspberry Pi user found"})§
+        return JsonResponse({'success': "Raspberry Pi user found"})
     except RaspberryPi.DoesNotExist:
         return HttpResponseForbidden({'error': 'Raspberry Pi not found'})
    
@@ -93,14 +93,14 @@ def sensors(request):
 
 @login_required
 def start(request):
-    raspberry_pi = RaspberryPi.objects.get(id=request.POST.get('pid'))
+    raspberry_pi = RaspberryPi.objects.get(user=request.user)
     raspberry_pi.start = True
     raspberry_pi.save()
     return render(request, 'home.html')
 
 @login_required
 def end(request):
-    raspberry_pi = RaspberryPi.objects.get(id=request.POST.get('pid'))
+    raspberry_pi = RaspberryPi.objects.get(user=request.user)
     raspberry_pi.start = False
     raspberry_pi.save()
     return render(request, 'home.html')
