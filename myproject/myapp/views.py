@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
 import subprocess
@@ -67,32 +68,43 @@ def pid_register(request, raspberry_id):
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
         if raspberry_pi.user is None:
             return HttpResponseForbidden({'error': 'Raspberry Pi user not found'})
-        map_user_to_object[raspberry_pi.user] = breadPredictor.BreadPredictor()
+        map_user_to_object[raspberry_pi.user] = breadPredictor.breadPredictor()
         return JsonResponse({'success': "Raspberry Pi user found"})
     
     except RaspberryPi.DoesNotExist:
         return HttpResponseForbidden({'error': 'Raspberry Pi not found'})
-    
+   
+@csrf_exempt
 def sensors(request):
     if request.method == 'POST':
         temperature = request.POST.get('temp')
         humidity = request.POST.get('humid')
         proximity = request.POST.get('tof')
-        current_time = request.POST.get('sampling')
+        sampling_time = request.POST.get('sampling')
         pid = request.POST.get('pid')
-        user_raspberries = RaspberryPi.objects.filter(user=request.user)
+        print(f'pId: {pid}, type: {type(pid)}')
         raspberry_pi = RaspberryPi.objects.get(id=pid)
+        # user_raspberries = RaspberryPi.objects.filter(user=request.user)
+        
         user = raspberry_pi.user if raspberry_pi else None
+
 
     context = {
         'temp': temperature,
         'humid': humidity,
         'tof': proximity,
-        'sampling': current_time,
-        'user_raspberries': user_raspberries
+        'sampling': sampling_time,
+        'user_raspberries': user
     }
+   
+     
 
-    render(request, "home.html", context)
+    # print(f'ctx: {context}')
+   
+    return JsonResponse({"sampling": sampling_time})
+
+
+    # render(request, "home.html", context)
 
 def default_route(request):
     return render(request, 'default_route.html')

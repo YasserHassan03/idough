@@ -116,11 +116,6 @@
     <div class="return">
         <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
         <a href="{% url 'default_route' %}">Back to iDough</a>
-        <form method="POST" action="{% url 'start_subprocess' %}">
-            {% csrf_token %}
-            <input type="hidden" name="microservice_port" value="your_port_value">
-            <button type="submit">Start subprocess</button>
-        </form>
     </div>
 </body>
 
