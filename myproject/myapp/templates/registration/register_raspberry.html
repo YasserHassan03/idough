@@ -1,20 +1,83 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Register Raspberry Pi</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Register Raspberry Pi</h1>
-    {% if error %}
+    <div>
+        <h1>Register Raspberry Pi</h1>
+        {% if error %}
         <p><strong>Error:</strong> {{ error }}</p>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <label for="raspberry_id">Raspberry Pi ID:</label><br>
-        <input type="text" id="raspberry_id" name="raspberry_id" required><br>
-        <label for="microservice_port">Microservice Port:</label><br>
-        <input type="text" id="microservice_port" name="microservice_port" required><br>
-        <input type="submit" value="Register">
-    </form>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="raspberry_id">Raspberry Pi ID:</label><br>
+            <input type="text" id="raspberry_id" name="raspberry_id" required><br>
+            <label for="microservice_port">Microservice Port:</label><br>
+            <input type="text" id="microservice_port" name="microservice_port" required><br>
+            <input type="submit" value="Register">
+        </form>
+    </div>
 </body>
+
 </html>
