@@ -9,7 +9,8 @@ import numpy as np
 from collections import deque
 from scipy.signal import convolve
 import urllib3
-import threading
+# import threading
+import multiprocessing
 from enum import Enum
 
 # urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
@@ -140,7 +141,8 @@ def main():
     
     tempAndHumidSensor = Si7021Sensor()
     tofSensor = TofSensor()
-        
+    
+
     def sampleData():
         filterSamplingTime = 0.2
 
@@ -150,19 +152,30 @@ def main():
             time.sleep(filterSamplingTime)
 
 
-    filteringThread = threading.Thread(target=sampleData)
-     
+    # filteringThread = threading.Thread(target=sampleData)
+
+    proc = multiprocessing.Process(target=sampleData)
+
     while True:
         if state == State.Registration:
             print(f'State: {state}') 
-
-            res = r.get(url=url+f"/pid_register/{pId}", verify=False)
-
+            
+            try:
+                res = r.get(url=url+f"/pid_register/{pId}", verify=False)
+            except:
+                print(f"Error getting registration from sever")
+                continue
             # print(f'Status code: {res.status_code}')
 
             if res.status_code == 200: 
                 state = State.Active
-                filteringThread.start() 
+
+                # Not the prettiest of code
+                try: 
+                    proc.start() 
+                except:
+                    proc = multiprocessing.Process(target=sampleData)
+                    proc.start()
 
             time.sleep(samplingTime)
             continue
@@ -172,16 +185,22 @@ def main():
 
         data = {"temp":temp, "humid":rh, "tof":distance, "sampling":samplingTime, "pid":pId}
         print(f'temp:{temp}, humidity:{rh}, tof:{distance}')
-
-        # backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
-        backPressureResponse = r.post(url=url+f"/sensors/", data=data, verify=False)
+            
         
+        try:
+            backPressureResponse = r.post(url=url+f"/sensors/", data=data, verify=False)
+        except:
+            print(f"Error sending data to server from sever")
+            state = State.Registration
+            continue       
+       
+
         print(f'Status Code:{backPressureResponse.status_code}')
+        
 
         if backPressureResponse.status_code != 200:
             state = State.Registration
-            filteringThread.join()
-
+            proc.terminate()
             continue
 
         data = backPressureResponse.json()
