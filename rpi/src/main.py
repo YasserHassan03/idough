@@ -10,7 +10,7 @@ from collections import deque
 from scipy.signal import convolve
 import urllib3
 import threading
-from enum import Enum, verify
+from enum import Enum
 
 # urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
 urllib3.disable_warnings()
