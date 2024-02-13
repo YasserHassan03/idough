@@ -136,7 +136,7 @@ class State(Enum):
     
 def main():
 
-    url = "https://ec2-52-90-182-98.compute-1.amazonaws.com:"
+    url = "https://ec2-52-90-182-98.compute-1.amazonaws.com:5000"
     pId = 123
     state = State.Registration
     port = None 
@@ -158,11 +158,10 @@ def main():
      
     while True:
         if state == State.Registration:
-            res = r.post(url=url+"5000/register", json={"pId":pId}, verify=False)
+            res = r.post(url=url+f"pid_register/{pId}", verify=False)
             
             if res.status_code == 200: 
                 state = State.Active
-                port = res.json()['port']
                 filteringThread.start() 
 
             time.sleep(samplingTime)
@@ -171,14 +170,13 @@ def main():
         temp, rh = tempAndHumidSensor.readFiltered()
         distance = tofSensor.readFiltered()
 
-        data = {"temp":temp, "humid":rh, "tof":distance, "sampling":samplingTime}
+        data = {"temp":temp, "humid":rh, "tof":distance, "sampling":samplingTime, "pid":pId}
         print(f'temp:{temp}, humidity:{rh}, tof:{distance}')
 
         # backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
-        backPressureResponse = r.post(url=url+f"{port}/sensors", json=data, verify=False)
+        backPressureResponse = r.post(url=url+f"/sensors", json=data, verify=False)
         
         if backPressureResponse.status_code != 200:
-            port = None
             state = State.Registration
             filteringThread.join()
 
