@@ -51,24 +51,24 @@ def register_raspberry(request):
     if request.method == 'POST':
         raspberry_id = request.POST.get('raspberry_id')
         microservice_port = request.POST.get('microservice_port')
-        # Check if the Raspberry Pi ID is in the database
         raspberry = RaspberryPi.objects.filter(id=raspberry_id).first()
         if not raspberry:
             return render(request, 'registration/register_raspberry.html', {'error': 'Invalid Raspberry Pi ID'})
-        # Check if the Raspberry Pi is already registered
         if raspberry.user:
             return render(request, 'registration/register_raspberry.html', {'error': 'Raspberry Pi already registered'})
-        # Register the Raspberry Pi to the current user
         raspberry.user = request.user
         if microservice_port is not None:
             raspberry.microservice_port = microservice_port
-            subprocess.Popen(["python3", "../../AWS-STUFF/app.py", str(microservice_port)])
-
         raspberry.save()
         return redirect('home')
     else:
         return render(request, 'registration/register_raspberry.html')
-    
+
+def start_subprocess(request):
+    microservice_port = request.POST.get('microservice_port')
+    subprocess.Popen(["python3", "../AWS-Stuff/app.py", str(microservice_port)])
+    return redirect('home')  # replace 'home' with the name of your home view
+
 def get_microservice_port(request, raspberry_id):
     try:
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
@@ -80,5 +80,4 @@ def get_microservice_port(request, raspberry_id):
 
 def default_route(request):
     return render(request, 'default_route.html')
-
 
