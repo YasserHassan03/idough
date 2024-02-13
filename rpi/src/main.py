@@ -19,8 +19,9 @@ urllib3.disable_warnings()
 class MySensor: 
     @abstractmethod
     def __init__(self) -> None:
-        raise NotImplemented
-    
+        self.b = np.array([0.0151, 0.0366, 0.0921, 0.1567, 0.1995, 0.1995, 0.1567, 0.0921, 0.0366, 0.0151])  
+        self.N = 10 
+ 
     @abstractmethod 
     def read(self): # Return all data from sensor
         raise NotImplemented
@@ -28,12 +29,6 @@ class MySensor:
     @abstractmethod 
     def readFiltered(self):
         raise NotImplemented
-
- 
-class LowPassFilter: # Wrapper class, which implements a low pass filter for a given sensor 
-    def __init__(self, N = 10) -> None:
-        self.b = np.array([0.0151, 0.0366, 0.0921, 0.1567, 0.1995, 0.1995, 0.1567, 0.0921, 0.0366, 0.0151])  
-        self.N = N 
 
     def filter(self, q: deque):       
         assert len(q) == len(self.b)
@@ -50,8 +45,8 @@ class LowPassFilter: # Wrapper class, which implements a low pass filter for a g
 
         return q
 
-  
-class Si7021Sensor(MySensor, LowPassFilter):
+    
+class Si7021Sensor(MySensor):
     def __init__(self, address=0x40, N=10): # default temperature master hold
         self.add = address
         self.tempCommand = 0xe3 # Temperature, Master No Hold
@@ -59,14 +54,14 @@ class Si7021Sensor(MySensor, LowPassFilter):
         self.bus = smbus2.SMBus(1)
         self.qTemp = deque([0]*N)
         self.qHumid = deque([0]*N)
-        super().__init__() 
-
+        super().__init__()
 
     def read(self):
         return self.read_temp(), self.read_humid() 
   
     
     def readFiltered(self):
+        # return self.read()
         return self.filteredTemp(), self.filteredHumid()
     
     def read_temp(self):          
@@ -108,18 +103,18 @@ class Si7021Sensor(MySensor, LowPassFilter):
     
 
 
-class TofSensor(MySensor, LowPassFilter):
+class TofSensor(MySensor):
     def __init__(self, N=10) -> None:
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.sensor =  adafruit_vl53l0x.VL53L0X(self.i2c)
         self.qDistance = deque([0]*N)
-        super().__init__()   
+        super().__init__()
 
     def read(self):
         return float(self.sensor.range) 
 
-
     def readFiltered(self):
+        # return self.read()
         return self.filteredTof()
 
     def filteredTof(self):
@@ -136,10 +131,10 @@ class State(Enum):
     
 def main():
 
-    url = "https://ec2-52-90-182-98.compute-1.amazonaws.com:5000"
+    url = "http://ec2-52-90-182-98.compute-1.amazonaws.com:5000"
     pId = 123
     state = State.Registration
-    port = None 
+    # port = None 
 
     samplingTime = 1
     
@@ -148,18 +143,23 @@ def main():
         
     def sampleData():
         filterSamplingTime = 0.2
+
         while True:
             tempAndHumidSensor.sampleSi7021()
             tofSensor.sampleTof()
             time.sleep(filterSamplingTime)
 
 
-    filteringThread = threading.Thread(sampleData())
+    filteringThread = threading.Thread(target=sampleData)
      
     while True:
         if state == State.Registration:
-            res = r.post(url=url+f"pid_register/{pId}", verify=False)
-            
+            print(f'State: {state}') 
+
+            res = r.get(url=url+f"/pid_register/{pId}", verify=False)
+
+            # print(f'Status code: {res.status_code}')
+
             if res.status_code == 200: 
                 state = State.Active
                 filteringThread.start() 
@@ -174,8 +174,10 @@ def main():
         print(f'temp:{temp}, humidity:{rh}, tof:{distance}')
 
         # backPressure = r.post(url=url+"/", json=data, verify='./certificate.crt')
-        backPressureResponse = r.post(url=url+f"/sensors", json=data, verify=False)
+        backPressureResponse = r.post(url=url+f"/sensors/", data=data, verify=False)
         
+        print(f'Status Code:{backPressureResponse.status_code}')
+
         if backPressureResponse.status_code != 200:
             state = State.Registration
             filteringThread.join()
@@ -183,9 +185,10 @@ def main():
             continue
 
         data = backPressureResponse.json()
-        samplingTime = data['sampling']
-        print(f'response: {data}')
+        samplingTime = int(data['sampling'])
+        # print(f'response: {data}')
 
+        # print(f'State: {state}')
         time.sleep(samplingTime)
 
 
