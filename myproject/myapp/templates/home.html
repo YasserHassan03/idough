@@ -99,6 +99,9 @@
         <div class="box">
             <p>Humidity: <span id="humid">{{ humid }}</span></p>
         </div>
+        <div class="box">
+            <p>Time left: <span id="time">{{ pred }}</span></p>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -111,6 +114,7 @@
                 $('#temp').text(data.temp);
                 $('#tof').text(data.tof);
                 $('#humid').text(data.humid);
+                $('#time').text(data.pred);
             },
             error: function(error) {
                 console.log(error);
@@ -121,9 +125,9 @@
     
     <div class="return">
         <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
-        <a href="{% url 'default_route' %}">Back to iDough</a>
         <a href="{% url 'start' %}">Start Raspberry Pi Service</a>
         <a href="{% url 'end'  %}">End Raspberry Pi Service</a>
+        <a href="{% url 'default_route' %}">Logout</a>
     </div>
 </body>
 

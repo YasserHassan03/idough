@@ -3,7 +3,6 @@ from collections import deque
 # import requests
 # import random
 # import time
-
 class BreadPredictor:
     def __init__(self, recipeTime=120, bowlHeight=250, targetGrowth=2, yeast=3, salt=6, flour=500, water=350):
         self.height = deque(maxlen=10)

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
-import subprocess
+# import subprocess
 from breadPredictor import BreadPredictor
 
 map_user_to_object = {}
@@ -36,7 +37,6 @@ def user_login(request):
 
 @login_required
 def home(request):
-    user_raspberries = RaspberryPi.objects.filter(user=request.user)
     return render(request, 'home.html')
 
 @login_required
@@ -76,12 +76,14 @@ def sensors(request):
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
         started = raspberry_pi.start
+        logged_in = user.is_authenticated
 
-    # print(f'Started: {started}')
-
+    if not logged_in:
+        return JsonResponse({'sampling': "10000"})
+        
     if started:
         map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
-   
+
     return JsonResponse({"sampling": sampling_time})
 
 @login_required
@@ -98,20 +100,23 @@ def end(request):
     raspberry_pi.save()
     return render(request, 'home.html')
 
+@login_required
 def poll_data(request):
     raspberry_pi = RaspberryPi.objects.get(user=request.user)
     user = raspberry_pi.user 
     started = raspberry_pi.start
+    # logged_in = user.is_authenticated
     if user in map_user_to_object and started:
         predictor_obj = map_user_to_object[user]
         if len(predictor_obj.height) > 0 and  len(predictor_obj.temp)> 0 and len(predictor_obj.humid) > 0:
             tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
-            return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof})
+            return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof, 'pred': predictor_obj.predictTime()})
         else:
-            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---'})
-    return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---'})
+            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
+    return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
 
 def default_route(request):
+    logout(request)
     return render(request, 'default_route.html')
 
 
