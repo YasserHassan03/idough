@@ -218,16 +218,6 @@
             text.innerText = `${temperature}°C`;
         }
 
-        // Simulate updating temperature data
-        function simulateTemperatureUpdate() {
-            // Simulate new temperature data (replace with actual data retrieval)
-            const newTemperature = Math.floor(Math.random() * 100);
-            updateTemperature(newTemperature);
-        }
-
-        // Call the function to start updating temperature data
-        setInterval(simulateTemperatureUpdate, 2000);
-
         // Proximity Chart
         var proximityCtx = document.getElementById('proximityChart').getContext('2d');
         var proximityChart = new Chart(proximityCtx, {
@@ -270,16 +260,6 @@
             proximityChart.update();
         }
 
-        // Simulate updating proximity data
-        function simulateProximityUpdate() {
-            // Simulate new proximity data (replace with actual data retrieval)
-            const newProximity = Math.floor(Math.random() * 100);
-            updateProximityChart(newProximity);
-        }
-
-        // Call the function to start updating proximity data
-        setInterval(simulateProximityUpdate, 2000);
-
         // AJAX Function to fetch data
         $(document).ready(function() {
             setInterval(function() {
@@ -287,9 +267,10 @@
                     url: '/poll_data',
                     type: 'GET',
                     success: function(data) {
-                        $('#temp').text(data.temp);
+                        updateTemperature(data.temp);
                         $('#humid').text(data.humid);
                         $('#time').text(data.pred);
+                        updateProximityChart(data.proximity);
                     },
                     error: function(error) {
                         console.log(error);
