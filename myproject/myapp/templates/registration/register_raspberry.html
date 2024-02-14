@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -28,6 +29,8 @@
             border-radius: 10px;
             padding: 30px;
             text-align: center;
+            width: 30vw;
+            margin-left: 30%;
         }
 
         .registration-form {
@@ -71,10 +74,21 @@
         .registration-form label {
             text-align: center; /* Center align the labels */
         }
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-bottom: 2vw;
+            margin-left: 450px;
+        }
+
     </style>
 </head>
 
 <body>
+    <div>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
     <div class="registration-container">
         <h1>Register Raspberry Pi</h1>
         {% if error %}
@@ -90,6 +104,7 @@
                 <input type="submit" value="Register">
             </form>
         </div>
+    </div>
     </div>
 </body>
 

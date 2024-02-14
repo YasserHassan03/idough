@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,8 +9,8 @@
     <style>
         /* Resetting default margins and paddings */
         * {
-            margin: 16;
-            padding: 2;
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
@@ -22,6 +23,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column; /* Stack items vertically */
         }
 
         .login-container {
@@ -29,6 +31,7 @@
             border-radius: 10px;
             padding: 30px;
             text-align: center;
+            margin-bottom: 4vw;
         }
 
         .login-form {
@@ -62,10 +65,20 @@
         .login-form button[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-bottom: 2vw;
+            margin-left: 450px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
     <div class="login-container">
         <h2>User Login</h2>
         <div class="login-form">

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,6 +30,8 @@
             border-radius: 10px;
             padding: 30px;
             text-align: center;
+            width: 30vw;
+            margin-left: 30%;
         }
 
         .registration-form {
@@ -72,10 +75,20 @@
         .registration-form button[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-left: 450px;
+        }
     </style>
 </head>
 
 <body>
+    <div>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
     <div class="registration-container">
         <h2>User Registration</h2>
         <div class="registration-form">
@@ -100,6 +113,7 @@
                 <button type="submit">Register</button>
             </form>
         </div>
+    </div>
     </div>
 </body>
 

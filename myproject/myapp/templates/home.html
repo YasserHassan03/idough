@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,6 +20,7 @@
             color: white;
             padding: 20px;
             height: 100vh;
+            position: relative; /* Added */
         }
 
         h1 {
@@ -144,10 +146,29 @@
             width: 100%;
             height: 100%;
         }
+
+        /* Added CSS for the image container */
+        .image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            z-index: 999; /* Ensure the image is above other elements */
+        }
+
+        .image-container img {
+            width: 100px; /* Adjust image width */
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Image container added -->
+    <div class="image-container">
+        <img src="{% static 'logo.png' %}" alt="Logo">
+    </div>
+
     <h1>Welcome to your Dashboard</h1>
     <div class="dashboard">
         <div class="box">
