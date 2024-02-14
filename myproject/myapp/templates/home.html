@@ -83,6 +83,14 @@
             background-color: #222;
         }
 
+        a.logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            margin-top: 0; /* Remove top margin */
+            margin-left: 0; /* Remove left margin */
+        }
+
         a:hover,
         button:hover {
             background-color: #007bff;
@@ -198,11 +206,12 @@
         </div>
     </div>
 
+    <a href="{% url 'default_route' %}" class="logout-button">Logout</a>
+
     <div class="return">
         <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
         <a href="{% url 'start' %}">Start Raspberry Pi Service</a>
         <a href="{% url 'end'  %}">End Raspberry Pi Service</a>
-        <a href="{% url 'default_route' %}">Logout</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
