@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDough - User Registration</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .registration-container {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .registration-form {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .registration-form p {
+            margin-bottom: 10px;
+        }
+
+        .registration-form label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .registration-form input[type="text"],
+        .registration-form input[type="password"],
+        .registration-form input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            outline: none;
+        }
+
+        .registration-form button[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .registration-form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="registration-container">
+        <h2>User Registration</h2>
+        <div class="registration-form">
+            <form method="post">
+                {% csrf_token %}
+                <p>
+                    <label for="id_username">Username:</label>
+                    {{ form.username }}
+                </p>
+                <p>
+                    <label for="id_email">Email:</label>
+                    {{ form.email }}
+                </p>
+                <p>
+                    <label for="id_password1">Password:</label>
+                    {{ form.password1 }}
+                </p>
+                <p>
+                    <label for="id_password2">Confirm Password:</label>
+                    {{ form.password2 }}
+                </p>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
