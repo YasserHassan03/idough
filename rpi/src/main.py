@@ -164,6 +164,7 @@ def main():
                 res = r.get(url=url+f"/pid_register/{pId}", verify=False)
             except:
                 print(f"Error getting registration from sever")
+                time.sleep(samplingTime)
                 continue
             # print(f'Status code: {res.status_code}')
 
