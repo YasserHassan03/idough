@@ -6,7 +6,6 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
-# import subprocess
 from breadPredictor import BreadPredictor
 
 map_user_to_object = {}
@@ -32,7 +31,7 @@ def user_login(request):
                 login(request, user)
                 user.logged_in = True 
                 user.save()
-                return redirect('home')
+                return redirect('start_process')
     else:
         form = UserAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
@@ -40,6 +39,10 @@ def user_login(request):
 @login_required
 def home(request):
     return render(request, 'home.html')
+
+@login_required
+def start_process(request):
+    return render(request, 'start_process.html')
 
 @login_required
 def register_raspberry(request):
@@ -74,13 +77,11 @@ def sensors(request):
         proximity = request.POST.get('tof')
         sampling_time = request.POST.get('sampling')
         pid = request.POST.get('pid')
-        # print(f'pId: {pid}, type: {type(pid)}')
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
         started = raspberry_pi.start
         logged_in = user.logged_in
 
-    print(f'logged_in: {logged_in}');
     if not logged_in:
         return JsonResponse({'sampling': 5})
         
@@ -89,13 +90,26 @@ def sensors(request):
 
     return JsonResponse({"sampling": 1})
 
-#fix start and end if raspberry pi is not registered
+@csrf_exempt
 @login_required
 def start(request):
+    time = request.POST.get('time')
+    yeast = request.POST.get('yeast')
+    flour = request.POST.get('flour')
+    salt = request.POST.get('salt')
+    water = request.POST.get('water')
     try:
         raspberry_pi = RaspberryPi.objects.get(user=request.user)
         raspberry_pi.start = True
+        if request.user not in map_user_to_object:
+            pid_register(request, raspberry_pi.id)
         raspberry_pi.save()
+        map_user_to_object[request.user].recipeTime = time
+        map_user_to_object[request.user].yeast = yeast
+        map_user_to_object[request.user].flour = flour
+        map_user_to_object[request.user].salt = salt
+        map_user_to_object[request.user].water = water
+        map_user_to_object[request.user].ingredWeight()
         return render(request, 'home.html')
     except RaspberryPi.DoesNotExist:
         return render(request, 'error_raspberry.html')
