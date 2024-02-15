@@ -109,13 +109,13 @@ def start(request):
             pid_register(request, raspberry_pi.id)
         raspberry_pi.save()
 
-        # map_user_to_object[request.user].recipeTime = time
-        # map_user_to_object[request.user].yeast = yeast
-        # map_user_to_object[request.user].flour = flour
-        # map_user_to_object[request.user].salt = salt
-        # map_user_to_object[request.user].water = water
+        map_user_to_object[request.user].recipeTime = time
+        map_user_to_object[request.user].yeast = yeast
+        map_user_to_object[request.user].flour = flour
+        map_user_to_object[request.user].salt = salt
+        map_user_to_object[request.user].water = water
         # map_user_to_object[request.user].ingredWeight()
-        #
+        
         return render(request, 'home.html')
     except RaspberryPi.DoesNotExist:
         return render(request, 'error_raspberry.html')
