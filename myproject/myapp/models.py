@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
-    bio = models.TextField(max_length=500, blank=True)
+    logged_in = models.BooleanField(default=False)
 
 class RaspberryPi(models.Model):
     id = models.TextField(max_length=50, primary_key=True)

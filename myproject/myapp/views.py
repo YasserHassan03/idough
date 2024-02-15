@@ -30,6 +30,8 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                request.user.logged_in = True
+                request.user.save()
                 return redirect('home')
     else:
         form = UserAuthenticationForm()
@@ -76,15 +78,15 @@ def sensors(request):
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
         started = raspberry_pi.start
-        logged_in = user.is_authenticated
+        logged_in = user.logged_in 
 
     if not logged_in:
-        return JsonResponse({'sampling': "10000"})
+        return JsonResponse({'sampling': "10"})
         
     if started:
         map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
 
-    return JsonResponse({"sampling": sampling_time})
+    return JsonResponse({"sampling": "1"})
 
 @login_required
 def start(request):
@@ -117,6 +119,8 @@ def poll_data(request):
 
 def default_route(request):
     logout(request)
+    request.user.logged_in = False
+    request.user.save()
     return render(request, 'default_route.html')
 
 
