@@ -20,7 +20,8 @@
             color: white;
             padding: 20px;
             height: 100vh;
-            position: relative; /* Added */
+            position: relative;
+            /* Added */
         }
 
         h1 {
@@ -32,7 +33,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-top: 15vw; /* Adjusted margin */
+            margin-top: 15vw;
+            /* Adjusted margin */
             margin-bottom: 10vw;
         }
 
@@ -87,8 +89,10 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            margin-top: 0; /* Remove top margin */
-            margin-left: 0; /* Remove left margin */
+            margin-top: 0;
+            /* Remove top margin */
+            margin-left: 0;
+            /* Remove left margin */
         }
 
         a:hover,
@@ -102,17 +106,21 @@
             top: 0;
             left: 0;
             padding: 20px;
-            z-index: 999; /* Ensure the image is above other elements */
+            z-index: 999;
+            /* Ensure the image is above other elements */
         }
 
         .image-container img {
-            width: 100px; /* Adjust image width */
+            width: 100px;
+            /* Adjust image width */
             height: auto;
         }
 
         .temperature-gauge {
-            width: 200px; /* Adjust gauge size */
-            height: 200px; /* Adjust gauge size */
+            width: 200px;
+            /* Adjust gauge size */
+            height: 200px;
+            /* Adjust gauge size */
             position: relative;
             margin: 0 auto;
             margin-top: 20px;
@@ -122,11 +130,14 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background-color: #333;
+            background: conic-gradient(red 0deg 130deg,
+                    orange 130deg 160deg,
+                    green 160deg 250deg,
+                    orange 250deg 280deg,
+                    red 280deg 360deg);
             position: absolute;
             z-index: 1;
         }
-
         .temperature-gauge .inner-circle {
             width: 90%;
             height: 90%;
@@ -162,8 +173,10 @@
 
         .graph-container {
             width: 100%;
-            height: 150px; /* Adjust height */
-            margin-top: 20px; /* Adjusted margin */
+            height: 150px;
+            /* Adjust height */
+            margin-top: 20px;
+            /* Adjusted margin */
         }
 
         canvas {
@@ -222,7 +235,7 @@
             const needle = document.getElementById('temperature-needle');
             const text = document.getElementById('temp');
 
-            const temperatureAngle = (temperature / 100) * 180;
+            const temperatureAngle = (temperature / 50) * 360;
             needle.style.transform = `translate(-50%, -100%) rotate(${temperatureAngle}deg)`;
             text.innerText = `${temperature}°C`;
         }
@@ -245,11 +258,23 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            fontColor: 'white' // Set the font color of the y-axis ticks to white
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontColor: 'white' // Set the font color of the x-axis ticks to white
                         }
                     }]
+                },
+                legend: {
+                    labels: {
+                        fontColor: 'white' // Set the font color of the legend labels to white
+                    }
                 }
             }
+
         });
 
         // Function to update proximity chart
@@ -270,18 +295,18 @@
         }
 
         // AJAX Function to fetch data
-        $(document).ready(function() {
-            setInterval(function() {
+        $(document).ready(function () {
+            setInterval(function () {
                 $.ajax({
                     url: '/poll_data',
                     type: 'GET',
-                    success: function(data) {
+                    success: function (data) {
                         updateTemperature(data.temp);
                         $('#humid').text(data.humid);
                         $('#time').text(data.pred);
                         updateProximityChart(data.proximity);
                     },
-                    error: function(error) {
+                    error: function (error) {
                         console.log(error);
                     }
                 });
