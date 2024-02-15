@@ -74,7 +74,6 @@ def register_raspberry(request):
         return render(request, 'registration/register_raspberry.html')
 
 def pid_register(request, raspberry_id):
-def pid_register(request, raspberry_id):
     try:
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
         if raspberry_pi.user is None:
@@ -231,7 +230,6 @@ def logout(request):
     user.save()
     auth.logout(request)
     return redirect('default_route')
-        return render(request, 'error_raspberry.html')
     
 @login_required
 def poll_data(request):

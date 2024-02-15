@@ -413,7 +413,7 @@
 
 
         // AJAX Function to fetch data
-        /* $(document).ready(function () {
+        $(document).ready(function () {
              setInterval(function () {
                  $.ajax({
                      url: '/poll_data',
@@ -429,34 +429,35 @@
                      }
                  });
              }, 2000);
-         });*/
-        function generateRandomData() {
-            const randomTemperature = Math.floor(Math.random() * 50); // Random temperature between 0 and 50
-            const randomHumidity = Math.floor(Math.random() * 100); // Random humidity between 0 and 100
-            const randomProximity = Math.floor(Math.random() * 100); // Random proximity value between 0 and 100
-            const randomPrediction = Math.floor(Math.random() * 100); // Random prediction value between 0 and 100
+         });
+         
+        // function generateRandomData() {
+        //     const randomTemperature = Math.floor(Math.random() * 50); // Random temperature between 0 and 50
+        //     const randomHumidity = Math.floor(Math.random() * 100); // Random humidity between 0 and 100
+        //     const randomProximity = Math.floor(Math.random() * 100); // Random proximity value between 0 and 100
+        //     const randomPrediction = Math.floor(Math.random() * 100); // Random prediction value between 0 and 100
 
-            return {
-                temp: randomTemperature,
-                humid: randomHumidity,
-                proximity: randomProximity,
-                pred: randomPrediction
-            };
-        }
-        function fetchRandomData() {
-            const randomData = generateRandomData();
-            updateTemperature(randomData.temp);
-            updateHumidityChart(randomData.humid);
-            updateTimeLeft(randomData.pred);
-            updateProximityChart(randomData.proximity);
-        }
+        //     return {
+        //         temp: randomTemperature,
+        //         humid: randomHumidity,
+        //         proximity: randomProximity,
+        //         pred: randomPrediction
+        //     };
+        // }
+        // function fetchRandomData() {
+        //     const randomData = generateRandomData();
+        //     updateTemperature(randomData.temp);
+        //     updateHumidityChart(randomData.humid);
+        //     updateTimeLeft(randomData.pred);
+        //     updateProximityChart(randomData.proximity);
+        // }
 
-        fetchRandomData();
+        // fetchRandomData();
 
-        // AJAX Function to fetch data
-        $(document).ready(function () {
-            setInterval(fetchRandomData, 2000); // Fetch random data every 2 seconds
-        });
+        // // AJAX Function to fetch data
+        // $(document).ready(function () {
+        //     setInterval(fetchRandomData, 2000); // Fetch random data every 2 seconds
+        // });
 
     </script>
 </body>
