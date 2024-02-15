@@ -9,8 +9,8 @@ import numpy as np
 from collections import deque
 from scipy.signal import convolve
 import urllib3
-# import threading
-import multiprocessing
+import threading
+# import multiprocessing
 from enum import Enum
 
 # urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
@@ -53,6 +53,7 @@ class Si7021Sensor(MySensor):
         self.tempCommand = 0xe3 # Temperature, Master No Hold
         self.humidityCommand = 0xe5 # Relative Humidity, Master No Hold
         self.bus = smbus2.SMBus(1)
+        time.sleep(2)
         self.qTemp = deque([0]*N)
         self.qHumid = deque([0]*N)
         super().__init__()
@@ -139,22 +140,25 @@ def main():
 
     samplingTime = 1
     
+    print('Creating Sensors .....')
     tempAndHumidSensor = Si7021Sensor()
     tofSensor = TofSensor()
-    
+    print('Created Sensors !') 
 
     def sampleData():
-        filterSamplingTime = 0.2
+        filterSamplingTime = 0.5
 
         while True:
             tempAndHumidSensor.sampleSi7021()
             tofSensor.sampleTof()
             time.sleep(filterSamplingTime)
+            
+            if state == State.Registration:
+                return
 
+    filteringThread = threading.Thread(target=sampleData)
 
-    # filteringThread = threading.Thread(target=sampleData)
-
-    proc = multiprocessing.Process(target=sampleData)
+    # proc = multiprocessing.Process(target=sampleData)
 
     while True:
         if state == State.Registration:
@@ -173,10 +177,10 @@ def main():
 
                 # Not the prettiest of code
                 try: 
-                    proc.start() 
+                    filteringThread.start() 
                 except:
-                    proc = multiprocessing.Process(target=sampleData)
-                    proc.start()
+                    filteringThread = threading.Thread(target=sampleData) 
+                    filteringThread.start()
 
             time.sleep(samplingTime)
             continue
@@ -201,7 +205,7 @@ def main():
 
         if backPressureResponse.status_code != 200:
             state = State.Registration
-            proc.terminate()
+            filteringThread.join()
             continue
 
         data = backPressureResponse.json()
