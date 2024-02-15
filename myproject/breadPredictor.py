@@ -44,7 +44,7 @@ class BreadPredictor:
         if self.done: 
             self.timeForecast = 0
         else: 
-            self.timeForecast = 0.01*self.heightWeight()  + 0.69 * self.ingredientTime + 0.2*self.tempWeight() + 0.1*self.humidWeight()
+            self.timeForecast = self.ingredientTime #+ 0.2*self.tempWeight() + 0.1*self.humidWeight() 0.01*self.heightWeight()  + 0.69 * 
         return self.timeForecast
 
     def tempWeight(self):
@@ -97,6 +97,8 @@ class BreadPredictor:
         self.temp.append(temp)
         self.humid.append(humid)
         self.ingredientTime -= self.sampleTime
+        if self.ingredientTime <= 0:
+            self.done = True
         return True
 
     def gradCalc(self):
