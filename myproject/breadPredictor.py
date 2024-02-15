@@ -37,7 +37,7 @@ class BreadPredictor:
         if self.done:  # bread is done
             self.timeForecast = 0
         else: 
-            self.timeForecast = self.heightWeight()
+            self.timeForecast = 0.5* self.heightWeight() + 0.5* self.recipeTime
         return self.timeForecast
 
     def tempWeight(self):
