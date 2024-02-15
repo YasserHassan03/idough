@@ -80,8 +80,9 @@ def sensors(request):
         started = raspberry_pi.start
         logged_in = user.logged_in
 
+    print(f'logged_in: {logged_in}');
     if not logged_in:
-        return JsonResponse({'sampling': 10})
+        return JsonResponse({'sampling': 5})
         
     if started:
         map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
