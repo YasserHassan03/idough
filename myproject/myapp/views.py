@@ -98,7 +98,7 @@ def start(request):
         raspberry_pi.save()
         return render(request, 'home.html')
     except RaspberryPi.DoesNotExist:
-        return render(request, 'home.html')
+        return render(request, 'error_raspberry.html')
 
 @login_required
 def end(request):
@@ -108,7 +108,7 @@ def end(request):
         raspberry_pi.save()
         return render(request, 'home.html')
     except RaspberryPi.DoesNotExist:
-        return render(request, 'home.html')
+        return render(request, 'error_raspberry.html')
     
 @login_required
 def poll_data(request):
