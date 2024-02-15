@@ -378,7 +378,7 @@
                 dataset.data.push(newData);
             });
 
-            if (proximityChart.data.labels.length > 10) {
+            if (proximityChart.data.labels.length > 100) {
                 proximityChart.data.labels.shift();
                 proximityChart.data.datasets.forEach((dataset) => {
                     dataset.data.shift();
@@ -395,7 +395,7 @@
                 dataset.data.push(newData);
             });
 
-            if (humidityChart.data.labels.length > 10) {
+            if (humidityChart.data.labels.length > 100) {
                 humidityChart.data.labels.shift();
                 humidityChart.data.datasets.forEach((dataset) => {
                     dataset.data.shift();
@@ -422,7 +422,7 @@
                          updateTemperature(data.temp);
                          updateHumidityChart(data.humid);
                          updateTimeLeft(data.pred); 
-                         updateProximityChart(data.proximity);
+                         updateProximityChart(data.bread_height);
                      },
                      error: function (error) {
                          console.log(error);
