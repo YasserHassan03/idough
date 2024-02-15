@@ -38,11 +38,12 @@
             margin-top: 1vw !important;
             margin-bottom: 1vw !important;
         }
-        .boxes2{
+
+        .boxes2 {
             display: grid;
-            grid-template-columns: 50% 50%;
+            grid-template-columns: 30% 70%;
             gap: 20px;
-            margin: 5vw; 
+            margin: 5vw;
             margin-top: 1vw !important;
             margin-bottom: 1vw !important;
         }
@@ -206,6 +207,36 @@
         .time-left-box {
             grid-column: 2;
             grid-row: 1;
+            position: relative;
+        }
+
+        .time-taken-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            color: red;
+            font-size: 5vw;
+            padding: 20% 20%;
+            /* Adjusted padding */
+            border-radius: 10px;
+            /* Adjusted border radius */
+        }
+
+
+        .timer {
+            animation: countdown 1s linear infinite;
+        }
+
+        @keyframes countdown {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.5;
+            }
         }
     </style>
 </head>
@@ -226,7 +257,7 @@
         </div>
         <div class="box time-left-box">
             <h2>Time left</h2>
-            <p><span id="time">{{ pred }}</span></p>
+            <div class="time-taken-box"><span id="time" class="timer">{{ pred }}</span></div>
         </div>
     </div>
     <div class="boxes2">
@@ -236,12 +267,14 @@
                 <div class="outer-circle"></div>
                 <div class="inner-circle"></div>
                 <div class="temperature-needle" id="temperature-needle"></div>
-                <div class="temperature-text" id="temp">0°C</div>
+                <div class="temperature-text" id="temp">XXX</div>
             </div>
         </div>
         <div class="box">
             <h2>Humidity</h2>
-            <p><span id="humid">{{ humid }}</span></p>
+            <div class="graph-container">
+                <canvas id="humidityChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -303,6 +336,42 @@
 
         });
 
+        // Humidity Chart
+        var humidityCtx = document.getElementById('humidityChart').getContext('2d');
+        var humidityChart = new Chart(humidityCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: [],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'white' // Set the font color of the y-axis ticks to white
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontColor: 'white', // Set the font color of the x-axis ticks to white
+                        }
+                    }]
+                },
+                legend: {
+                    labels: {
+                        fontColor: 'white', // Set the font color of the legend labels to white
+                    }
+                }
+            }
+        });
+
         // Function to update proximity chart
         function updateProximityChart(newData) {
             proximityChart.data.labels.push('');
@@ -320,24 +389,76 @@
             proximityChart.update();
         }
 
+        // Function to update humidity chart
+        function updateHumidityChart(newData) {
+            humidityChart.data.labels.push('');
+            humidityChart.data.datasets.forEach((dataset) => {
+                dataset.data.push(newData);
+            });
+
+            if (humidityChart.data.labels.length > 10) {
+                humidityChart.data.labels.shift();
+                humidityChart.data.datasets.forEach((dataset) => {
+                    dataset.data.shift();
+                });
+            }
+
+            humidityChart.update();
+        }
+
+        // Function to update time left
+        function updateTimeLeft(timeLeft) {
+            const timeSpan = document.getElementById('time');
+            timeSpan.innerText = timeLeft;
+        }
+
+
+        // AJAX Function to fetch data
+        /* $(document).ready(function () {
+             setInterval(function () {
+                 $.ajax({
+                     url: '/poll_data',
+                     type: 'GET',
+                     success: function (data) {
+                         updateTemperature(data.temp);
+                         updateHumidityChart(data.humid);
+                         updateTimeLeft(data.pred); 
+                         updateProximityChart(data.proximity);
+                     },
+                     error: function (error) {
+                         console.log(error);
+                     }
+                 });
+             }, 2000);
+         });*/
+        function generateRandomData() {
+            const randomTemperature = Math.floor(Math.random() * 50); // Random temperature between 0 and 50
+            const randomHumidity = Math.floor(Math.random() * 100); // Random humidity between 0 and 100
+            const randomProximity = Math.floor(Math.random() * 100); // Random proximity value between 0 and 100
+            const randomPrediction = Math.floor(Math.random() * 100); // Random prediction value between 0 and 100
+
+            return {
+                temp: randomTemperature,
+                humid: randomHumidity,
+                proximity: randomProximity,
+                pred: randomPrediction
+            };
+        }
+        function fetchRandomData() {
+            const randomData = generateRandomData();
+            updateTemperature(randomData.temp);
+            updateHumidityChart(randomData.humid);
+            updateTimeLeft(randomData.pred);
+            updateProximityChart(randomData.proximity);
+        }
+
+        fetchRandomData();
+
         // AJAX Function to fetch data
         $(document).ready(function () {
-            setInterval(function () {
-                $.ajax({
-                    url: '/poll_data',
-                    type: 'GET',
-                    success: function (data) {
-                        updateTemperature(data.temp);
-                        $('#humid').text(data.humid);
-                        $('#time').text(data.pred);
-                        updateProximityChart(data.proximity);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }, 300000);
+            setInterval(fetchRandomData, 2000); // Fetch random data every 2 seconds
         });
+
     </script>
 </body>
 

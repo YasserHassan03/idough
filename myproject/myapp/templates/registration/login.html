@@ -23,7 +23,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            flex-direction: column; /* Stack items vertically */
+            flex-direction: column;
+            /* Stack items vertically */
         }
 
         .login-container {
@@ -82,7 +83,7 @@
     <div class="login-container">
         <h2>User Login</h2>
         <div class="login-form">
-            <form method="post">
+            <form method="post" id="loginForm">
                 {% csrf_token %}
                 <p>
                     <label for="id_username">Username:</label>
@@ -94,6 +95,16 @@
                 </p>
                 <button type="submit">Login</button>
             </form>
+            {% if form.errors %}
+            <div id="errorAlert" style="display: none;">{{ form.errors }}</div>
+            <script>
+                // Show error alert if form has errors
+                var error = "{{ form.errors|escapejs }}";
+                var errorMessage = error.slice(68,158); 
+                alert(errorMessage);
+                console.log(errorMessage);
+            </script>
+            {% endif %}
         </div>
     </div>
 </body>
