@@ -96,7 +96,7 @@
         <img src="{% static 'logo.png' %}">
     </div>
 
-    <form action="/start/" method="post">
+    <form action="/start/" method="post" onsubmit="return validateForm()">
         <label for="time">Recipe time in minutes:</label><br>
         <input type="number" id="time" name="time"><br>
         <label for="yeast">Yeast weight in grams:</label><br>
@@ -110,5 +110,21 @@
         <input type="submit" value="Start Raspberry Pi Service">
     </form>
     <a href="{% url 'register_raspberry' %}" class="blue-box">Register a new Raspberry Pi</a>
+
+    <script>
+        function validateForm() {
+            var time = document.getElementById("time").value;
+            var yeast = document.getElementById("yeast").value;
+            var flour = document.getElementById("flour").value;
+            var salt = document.getElementById("salt").value;
+            var water = document.getElementById("water").value;
+
+            if (time === "" || yeast === "" || flour === "" || salt === "" || water === "") {
+                alert("Please fill out all fields");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
