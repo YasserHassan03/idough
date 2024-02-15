@@ -1,7 +1,7 @@
+from django.contrib import auth
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
@@ -30,6 +30,8 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                user.logged_in = True 
+                user.save()
                 return redirect('home')
     else:
         form = UserAuthenticationForm()
@@ -76,30 +78,38 @@ def sensors(request):
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
         started = raspberry_pi.start
-        logged_in = user.is_authenticated
+        logged_in = user.logged_in
 
+    print(f'logged_in: {logged_in}');
     if not logged_in:
-        return JsonResponse({'sampling': "10000"})
+        return JsonResponse({'sampling': 5})
         
     if started:
         map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
 
-    return JsonResponse({"sampling": sampling_time})
+    return JsonResponse({"sampling": 1})
 
+#fix start and end if raspberry pi is not registered
 @login_required
 def start(request):
-    raspberry_pi = RaspberryPi.objects.get(user=request.user)
-    raspberry_pi.start = True
-    raspberry_pi.save()
-    return render(request, 'home.html')
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = True
+        raspberry_pi.save()
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'error_raspberry.html')
 
 @login_required
 def end(request):
-    raspberry_pi = RaspberryPi.objects.get(user=request.user)
-    raspberry_pi.start = False
-    raspberry_pi.save()
-    return render(request, 'home.html')
-
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = False
+        raspberry_pi.save()
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'error_raspberry.html')
+    
 @login_required
 def poll_data(request):
     raspberry_pi = RaspberryPi.objects.get(user=request.user)
@@ -115,9 +125,18 @@ def poll_data(request):
             return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
     return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
 
+def logout(request):
+    user = request.user
+    user.logged_in = False  
+    user.save()
+    auth.logout(request)
+    return redirect('default_route')
+
 def default_route(request):
-    logout(request)
     return render(request, 'default_route.html')
+
+
+
 
 
 
