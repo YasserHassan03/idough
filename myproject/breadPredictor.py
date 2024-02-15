@@ -2,9 +2,8 @@ import numpy as np
 from collections import deque
 # import requests
 # import random
-# import time
 class BreadPredictor:
-    def __init__(self, recipeTime=120, bowlHeight=250, targetGrowth=2, yeast=3, salt=6, flour=500, water=350):
+    def _init_(self, recipeTime=120, bowlHeight=250, targetGrowth=2, yeast=3, salt=6, flour=500, water=350, sampleTime=1):
         self.height = deque(maxlen=10)
         self.temp = deque(maxlen=10)
         self.humid = deque(maxlen=10)
@@ -20,7 +19,7 @@ class BreadPredictor:
         self.humidWarning = False
         self.heightWarning = False
         self.done = False
-        self.sampleTime = 1
+        self.sampleTime = sampleTime
 
     def getWarning(self):
         return self.tempWarning, self.humidWarning, self.heightWarning
@@ -34,10 +33,11 @@ class BreadPredictor:
         return 0.7 * yeastGrad + 0.3 * saltGrad
 
     def predictTime(self):
+        self.recipeTime = 0.5*self.recipeWeight()+ 0.4 * self.tempWeight() + 0.1* self.humidWeight()
         if self.done:  # bread is done
             self.timeForecast = 0
-        else:
-            self.timeForecast = 0.4 * self.tempWeight() + 0.1 * self.humidWeight() + 0.5 * self.heightWeight()
+        else: 
+            self.timeForecast = 0.5* self.heightWeight() + 0.5* self.recipeTime
         return self.timeForecast
 
     def tempWeight(self):
@@ -74,18 +74,19 @@ class BreadPredictor:
             curGrowthRate = self.growthRate[-1]  # growth rate in mm/sampleTime
             if curGrowthRate > 0:
                 if self.height[-1] < self.bowlHeight:
-                    self.sampleTime -= 10  # decrease sample time (rate of growth is increasing)
+                    #self.sampleTime -= 10  # decrease sample time (rate of growth is increasing)
                     targetHeight = max(self.height[0] * self.targetGrowth, self.bowlHeight)
                     timeLeft = (targetHeight - self.height[-1]) / curGrowthRate  # latest growth rate based time pred in sampleTimes
                     return timeLeft*curSampleTime / 60  # in minutes
             else:
-                self.sampleTime+=10 #increase sample time
-                return self.recipeTime  # dough not growing right now
+                #self.sampleTime+=10 #increase sample time
+                return self.timeForecast  # dough not growing right now
 
     def insertData(self, distance, temp, humid):
         self.height.append(self.calulateHeight(distance))
         self.temp.append(temp)
         self.humid.append(humid)
+        self.recipeTime = self.recipeTime - self.sampleTime
         return True
 
     def gradCalc(self):
@@ -102,5 +103,5 @@ class BreadPredictor:
 #         proofingTime.insertData(dataPacket)
 #         timeRemaining = proofingTime.predictTime()#predict time remaining
 #
-# if _name_ == "_main_":
+# if name == "main":
 #

@@ -81,12 +81,12 @@ def sensors(request):
         logged_in = user.logged_in
 
     if not logged_in:
-        return JsonResponse({'sampling': "10"})
+        return JsonResponse({'sampling': 10})
         
     if started:
         map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
 
-    return JsonResponse({"sampling": "1"})
+    return JsonResponse({"sampling": 1})
 
 @login_required
 def start(request):
