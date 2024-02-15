@@ -1,7 +1,7 @@
+from django.contrib import auth
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
@@ -89,20 +89,27 @@ def sensors(request):
 
     return JsonResponse({"sampling": 1})
 
+#fix start and end if raspberry pi is not registered
 @login_required
 def start(request):
-    raspberry_pi = RaspberryPi.objects.get(user=request.user)
-    raspberry_pi.start = True
-    raspberry_pi.save()
-    return render(request, 'home.html')
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = True
+        raspberry_pi.save()
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'home.html')
 
 @login_required
 def end(request):
-    raspberry_pi = RaspberryPi.objects.get(user=request.user)
-    raspberry_pi.start = False
-    raspberry_pi.save()
-    return render(request, 'home.html')
-
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = False
+        raspberry_pi.save()
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'home.html')
+    
 @login_required
 def poll_data(request):
     raspberry_pi = RaspberryPi.objects.get(user=request.user)
@@ -122,11 +129,14 @@ def logout(request):
     user = request.user
     user.logged_in = False  
     user.save()
-    logout(request)
+    auth.logout(request)
     return redirect('default_route')
 
 def default_route(request):
     return render(request, 'default_route.html')
+
+
+
 
 
 

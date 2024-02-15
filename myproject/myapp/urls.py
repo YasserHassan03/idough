@@ -13,5 +13,5 @@ urlpatterns = [
     path('sensors/', views.sensors, name='sensors'),
     path('start/', views.start, name='start'),
     path('end/', views.end, name='end'),
-    path('logout/', views.end, name='logout')
+    path('logout/', views.logout, name='logout')
 ]
