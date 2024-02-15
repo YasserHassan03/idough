@@ -1,11 +1,17 @@
 from django.contrib import auth
+from django.contrib import auth
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
+from breadPredictor import BreadPredictor
+
+map_user_to_object = {}
 from breadPredictor import BreadPredictor
 
 map_user_to_object = {}
@@ -32,12 +38,20 @@ def user_login(request):
                 user.logged_in = True 
                 user.save()
                 return redirect('start_process')
+                user.logged_in = True 
+                user.save()
+                return redirect('start_process')
     else:
         form = UserAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
 
 @login_required
 def home(request):
+    return render(request, 'home.html')
+
+@login_required
+def start_process(request):
+    return render(request, 'start_process.html')
     return render(request, 'home.html')
 
 @login_required
@@ -59,6 +73,7 @@ def register_raspberry(request):
     else:
         return render(request, 'registration/register_raspberry.html')
 
+def pid_register(request, raspberry_id):
 def pid_register(request, raspberry_id):
     try:
         raspberry_pi = RaspberryPi.objects.get(id=raspberry_id)
@@ -127,7 +142,95 @@ def end(request):
         raspberry_pi.start = False
         raspberry_pi.save()
         return render(request, 'home.html')
+        if raspberry_pi.user is None:
+            return HttpResponseForbidden({'error': 'Raspberry Pi user not found'})
+        map_user_to_object[raspberry_pi.user] = BreadPredictor()
+        return JsonResponse({'success': "Raspberry Pi user found"})
     except RaspberryPi.DoesNotExist:
+        return HttpResponseForbidden({'error': 'Raspberry Pi not found'})
+   
+@csrf_exempt
+def sensors(request):
+    if request.method == 'POST':
+        temperature = request.POST.get('temp')
+        humidity = request.POST.get('humid')
+        proximity = request.POST.get('tof')
+        # sampling_time = request.POST.get('sampling')
+        pid = request.POST.get('pid')
+        raspberry_pi = RaspberryPi.objects.get(id=pid)
+        user = raspberry_pi.user if raspberry_pi else None
+        started = raspberry_pi.start
+        logged_in = user.logged_in
+
+    if not logged_in:
+        return JsonResponse({'sampling': 5})
+        
+    if started:
+        map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
+
+    return JsonResponse({"sampling": 1})
+
+@csrf_exempt
+@login_required
+def start(request):
+    time = request.POST.get('time')
+    yeast = request.POST.get('yeast')
+    flour = request.POST.get('flour')
+    salt = request.POST.get('salt')
+    water = request.POST.get('water')
+
+    print(f'time: {time}, yeast: {yeast}, flour: {flour}, salt: {salt}, water: {water}')
+
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = True
+
+        if request.user not in map_user_to_object:
+            pid_register(request, raspberry_pi.id)
+        raspberry_pi.save()
+
+        map_user_to_object[request.user].recipeTime = time
+        map_user_to_object[request.user].yeast = yeast
+        map_user_to_object[request.user].flour = flour
+        map_user_to_object[request.user].salt = salt
+        map_user_to_object[request.user].water = water
+        # map_user_to_object[request.user].ingredWeight()
+        
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'error_raspberry.html')
+
+@login_required
+def end(request):
+    try:
+        raspberry_pi = RaspberryPi.objects.get(user=request.user)
+        raspberry_pi.start = False
+        raspberry_pi.save()
+        return render(request, 'home.html')
+    except RaspberryPi.DoesNotExist:
+        return render(request, 'error_raspberry.html')
+    
+@login_required
+def poll_data(request):
+    raspberry_pi = RaspberryPi.objects.get(user=request.user)
+    user = raspberry_pi.user 
+    started = raspberry_pi.start
+    # logged_in = user.is_authenticated
+    if user in map_user_to_object and started:
+        predictor_obj = map_user_to_object[user]
+        if len(predictor_obj.height) > 0 and  len(predictor_obj.temp)> 0 and len(predictor_obj.humid) > 0:
+            tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
+            return JsonResponse({'temp': temp, 'humid': humid, 'tof': tof, 'pred': predictor_obj.predictTime()})
+        else:
+            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
+    return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
+
+def logout(request):
+    user = request.user
+    user.logged_in = False  
+    user.save()
+    auth.logout(request)
+    return redirect('default_route')
         return render(request, 'error_raspberry.html')
     
 @login_required

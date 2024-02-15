@@ -1,19 +1,130 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <body>
-        <form action="/start/" method="post">
-            <label for="time">Recipe time in minutes:</label><br>
-            <input type="number" id="time" name="time"><br>
-            <label for="yeast">Yeast weight in grams:</label><br>
-            <input type="number" id="yeast" name="yeast"><br>
-            <label for="flour">Flour weight in grams:</label><br>
-            <input type="number" id="flour" name="flour"><br>
-            <label for="salt">Salt weight in grams:</label><br>
-            <input type="number" id="salt" name="salt"><br>
-            <label for="water">Water weight in milliliters:</label><br>
-            <input type="number" id="water" name="water"><br>
-            <input type="submit" value="Start Raspberry Pi Service">
-        </form>
-        <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Pi Service</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            /* Stack items vertically */
+        }
+
+        form {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 4vw;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        a.blue-box {
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            background-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            text-decoration: none;
+        }
+
+        a.blue-box:hover {
+            background-color: #0056b3;
+        }
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-bottom: 2vw;
+            margin-left: 450px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
+
+    <form action="/start/" method="post" onsubmit="return validateForm()">
+        <label for="time">Recipe time in minutes:</label><br>
+        <input type="number" id="time" name="time"><br>
+        <label for="yeast">Yeast weight in grams:</label><br>
+        <input type="number" id="yeast" name="yeast"><br>
+        <label for="flour">Flour weight in grams:</label><br>
+        <input type="number" id="flour" name="flour"><br>
+        <label for="salt">Salt weight in grams:</label><br>
+        <input type="number" id="salt" name="salt"><br>
+        <label for="water">Water weight in milliliters:</label><br>
+        <input type="number" id="water" name="water"><br>
+        <input type="submit" value="Start Raspberry Pi Service">
+    </form>
+    <a href="{% url 'register_raspberry' %}" class="blue-box">Register a new Raspberry Pi</a>
+
+    <script>
+        function validateForm() {
+            var time = document.getElementById("time").value;
+            var yeast = document.getElementById("yeast").value;
+            var flour = document.getElementById("flour").value;
+            var salt = document.getElementById("salt").value;
+            var water = document.getElementById("water").value;
+
+            if (time === "" || yeast === "" || flour === "" || salt === "" || water === "") {
+                alert("Please fill out all fields");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
 </html>
