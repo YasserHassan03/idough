@@ -31,12 +31,22 @@
 
         .boxes {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 70% 30%;
+            /* Adjusted split */
             gap: 20px;
-            margin-top: 15vw;
-            /* Adjusted margin */
-            margin-bottom: 10vw;
+            margin: 5vw;
+            margin-top: 1vw !important;
+            margin-bottom: 1vw !important;
         }
+        .boxes2{
+            display: grid;
+            grid-template-columns: 50% 50%;
+            gap: 20px;
+            margin: 5vw; 
+            margin-top: 1vw !important;
+            margin-bottom: 1vw !important;
+        }
+
 
         .box {
             border: 1px solid #007bff;
@@ -47,6 +57,8 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
+            /*display: flex;
+            justify-content: center;*/
         }
 
         .box p {
@@ -67,14 +79,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 5vw;
+            margin-top: 1vw;
         }
 
         a,
         button {
             display: inline-block;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1vw;
             text-decoration: none;
             color: white;
             border: 1px solid #007bff;
@@ -138,6 +150,7 @@
             position: absolute;
             z-index: 1;
         }
+
         .temperature-gauge .inner-circle {
             width: 90%;
             height: 90%;
@@ -172,16 +185,27 @@
         }
 
         .graph-container {
-            width: 100%;
-            height: 150px;
+            width: 50%;
+            height: auto;
             /* Adjust height */
-            margin-top: 20px;
+            margin-top: 2vw;
+            margin-left: 7vw;
             /* Adjusted margin */
         }
 
         canvas {
-            width: 100% !important;
+            width: 150% !important;
             height: 100% !important;
+        }
+
+        .proximity-box {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .time-left-box {
+            grid-column: 2;
+            grid-row: 1;
         }
     </style>
 </head>
@@ -194,6 +218,18 @@
 
     <h1>Welcome to your Dashboard</h1>
     <div class="boxes">
+        <div class="box proximity-box">
+            <h2>Proximity</h2>
+            <div class="graph-container">
+                <canvas id="proximityChart"></canvas>
+            </div>
+        </div>
+        <div class="box time-left-box">
+            <h2>Time left</h2>
+            <p><span id="time">{{ pred }}</span></p>
+        </div>
+    </div>
+    <div class="boxes2">
         <div class="box">
             <h2>Temperature</h2>
             <div class="temperature-gauge">
@@ -204,18 +240,8 @@
             </div>
         </div>
         <div class="box">
-            <h2>Proximity</h2>
-            <div class="graph-container">
-                <canvas id="proximityChart"></canvas>
-            </div>
-        </div>
-        <div class="box">
             <h2>Humidity</h2>
             <p><span id="humid">{{ humid }}</span></p>
-        </div>
-        <div class="box">
-            <h2>Time left</h2>
-            <p><span id="time">{{ pred }}</span></p>
         </div>
     </div>
 
@@ -264,13 +290,13 @@
                     }],
                     xAxes: [{
                         ticks: {
-                            fontColor: 'white' // Set the font color of the x-axis ticks to white
+                            fontColor: 'white', // Set the font color of the x-axis ticks to white
                         }
                     }]
                 },
                 legend: {
                     labels: {
-                        fontColor: 'white' // Set the font color of the legend labels to white
+                        fontColor: 'white', // Set the font color of the legend labels to white
                     }
                 }
             }
@@ -310,7 +336,7 @@
                         console.log(error);
                     }
                 });
-            }, 2000);
+            }, 300000);
         });
     </script>
 </body>
