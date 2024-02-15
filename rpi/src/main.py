@@ -200,7 +200,7 @@ def main():
             continue       
        
 
-        print(f'Status Code:{backPressureResponse.status_code}')
+        print(f'Status Code:{backPressureResponse.status_code} time: {samplingTime}')
         
 
         if backPressureResponse.status_code != 200:
