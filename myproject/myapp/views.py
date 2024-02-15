@@ -80,7 +80,7 @@ def sensors(request):
         started = raspberry_pi.start
         logged_in = user.logged_in
 
-    print(f'logged_in: {logged_in}');
+    print(f'logged_in: {logged_in}')
     if not logged_in:
         return JsonResponse({'sampling': 5})
         
@@ -89,13 +89,26 @@ def sensors(request):
 
     return JsonResponse({"sampling": 1})
 
-#fix start and end if raspberry pi is not registered
+@csrf_exempt
 @login_required
 def start(request):
+    time = request.POST.get('time')
+    yeast = request.POST.get('yeast')
+    flour = request.POST.get('flour')
+    salt = request.POST.get('salt')
+    water = request.POST.get('water')
     try:
         raspberry_pi = RaspberryPi.objects.get(user=request.user)
         raspberry_pi.start = True
+        if request.user not in map_user_to_object:
+            pid_register(request, raspberry_pi.id)
         raspberry_pi.save()
+        map_user_to_object[request.user].recipeTime = time
+        map_user_to_object[request.user].yeast = yeast
+        map_user_to_object[request.user].flour = flour
+        map_user_to_object[request.user].salt = salt
+        map_user_to_object[request.user].water = water
+        map_user_to_object[request.user].ingredWeight()
         return render(request, 'home.html')
     except RaspberryPi.DoesNotExist:
         return render(request, 'error_raspberry.html')
