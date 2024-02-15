@@ -102,19 +102,6 @@
         <div class="box">
             <p>Time left: <span id="time">{{ pred }}</span></p>
         </div>
-        <form action="/start/" method="post">
-            <label for="time">Recipe time in minutes:</label><br>
-            <input type="number" id="time" name="time"><br>
-            <label for="yeast">Yeast weight in grams:</label><br>
-            <input type="number" id="yeast" name="yeast"><br>
-            <label for="flour">Flour weight in grams:</label><br>
-            <input type="number" id="flour" name="flour"><br>
-            <label for="salt">Salt weight in grams:</label><br>
-            <input type="number" id="salt" name="salt"><br>
-            <label for="water">Water weight in milliliters:</label><br>
-            <input type="number" id="water" name="water"><br>
-            <input type="submit" value="Start Raspberry Pi Service">
-          </form>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -137,7 +124,6 @@
     </script>
     
     <div class="return">
-        <a href="{% url 'register_raspberry' %}">Register a new Raspberry Pi</a>
         <a href="{% url 'end'  %}">End Raspberry Pi Service</a>
         <a href="{% url 'logout' %}">Logout</a>
     </div>
