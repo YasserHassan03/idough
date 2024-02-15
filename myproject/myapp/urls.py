@@ -12,5 +12,6 @@ urlpatterns = [
     path('poll_data/', views.poll_data, name='poll_data'),
     path('sensors/', views.sensors, name='sensors'),
     path('start/', views.start, name='start'),
-    path('end/', views.end, name='end')
+    path('end/', views.end, name='end'),
+    path('logout/', views.end, name='logout')
 ]
