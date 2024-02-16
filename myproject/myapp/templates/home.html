@@ -404,37 +404,41 @@
 
             humidityChart.update();
         }
+        
+        let alertShown = false;
 
         // Function to update time left
         function updateTimeLeft(timeLeft) {
             const timeSpan = document.getElementById('time');
-            timeSpan.innerText = timeLeft;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeSpan.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             if (timeLeft == 0) {
                 var message = "Your bread is ready!";
-                alert(message);
+                alert(message && !alertShown);
+                alertShown = true;           
             }
         }
 
-
         // AJAX Function to fetch data
         $(document).ready(function () {
-             setInterval(function () {
-                 $.ajax({
-                     url: '/poll_data',
-                     type: 'GET',
-                     success: function (data) {
-                         updateTemperature(data.temp);
-                         updateHumidityChart(data.humid);
-                         updateTimeLeft(data.pred); 
-                         updateProximityChart(data.bread_height);
-                     },
-                     error: function (error) {
-                         console.log(error);
-                     }
-                 });
-             }, 2000);
-         });
-         
+            setInterval(function () {
+                $.ajax({
+                    url: '/poll_data',
+                    type: 'GET',
+                    success: function (data) {
+                        updateTemperature(data.temp);
+                        updateHumidityChart(data.humid);
+                        updateTimeLeft(data.pred);
+                        updateProximityChart(data.bread_height);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }, 2000);
+        });
+
         // function generateRandomData() {
         //     const randomTemperature = Math.floor(Math.random() * 50); // Random temperature between 0 and 50
         //     const randomHumidity = Math.floor(Math.random() * 100); // Random humidity between 0 and 100
