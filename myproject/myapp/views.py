@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import RaspberryPi
 from .forms import UserRegistrationForm, UserAuthenticationForm
 from breadPredictor import BreadPredictor
+from django.core.mail import send_mail
 
 map_user_to_object = {}
 
@@ -35,9 +36,7 @@ def user_login(request):
                 user.logged_in = True 
                 user.save()
                 return redirect('start_process')
-                user.logged_in = True 
-                user.save()
-                return redirect('start_process')
+
     else:
         form = UserAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
@@ -141,9 +140,18 @@ def poll_data(request):
     raspberry_pi = RaspberryPi.objects.get(user=request.user)
     user = raspberry_pi.user 
     started = raspberry_pi.start
-    # logged_in = user.is_authenticated
     if user in map_user_to_object and started:
         predictor_obj = map_user_to_object[user]
+        pred_time = round(predictor_obj.predictTime())
+        if pred_time <= 0:
+            send_mail(
+                'Check your bread!',
+                'Check on your bread, the time is up! 🍞',
+                'icldough@gmail.com',
+                [user.email],
+                fail_silently=False,
+            )
+            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
         if len(predictor_obj.height) > 0 and  len(predictor_obj.temp)> 0 and len(predictor_obj.humid) > 0:
             tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
             return JsonResponse({'temp': round(temp, 2), 'humid': round(humid, 2), 'bread_height': round(tof), 'pred': round(predictor_obj.predictTime())})
