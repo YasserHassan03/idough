@@ -193,7 +193,7 @@ def main():
             
         
         try:
-            backPressureResponse = r.post(url=url+f"/sensors/", data=data, verify=False)
+            backPressureResponse = r.post(url=url+f"/sensors/", data=data, verify='./certificate.crt')
         except:
             print(f"Error sending data to server from sever")
             state = State.Registration
