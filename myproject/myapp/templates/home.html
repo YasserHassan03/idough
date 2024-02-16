@@ -413,10 +413,10 @@
             const hours = Math.floor(timeLeft / 60);
             const minutes = timeLeft % 60;
             const seconds = timeLeft*60 % 60;
-            timeSpan.innerText = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
-            if (timeLeft == 0) {
+            timeSpan.innerText = `${isNaN(hours) ? '--' : hours}:${minutes < 10 ? '0' : ''}${isNaN(minutes) ? '--' : minutes}`;
+            if (timeLeft <= 0 && !alertShown) {
                 var message = "Your bread is ready!";
-                alert(message && !alertShown);
+                alert(message);
                 alertShown = true;           
             }
         }

@@ -43,6 +43,7 @@ class BreadPredictor:
     def predictTime(self):
         if self.done: 
             self.timeForecast = 0
+            return 0
         else: 
             return self.ingredientTime #+ 0.2*self.tempWeight() + 0.1*self.humidWeight() 0.01*self.heightWeight()  + 0.69 * 
 

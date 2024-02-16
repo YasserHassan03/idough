@@ -88,7 +88,8 @@ def sensors(request):
 
     if not logged_in:
         return JsonResponse({'sampling': 10})
-        
+    
+    print(f'started: {started}')
     if started:
         pred = map_user_to_object[user] 
         pred.sampleTime = float(sampling_time) / 60
@@ -153,7 +154,11 @@ def poll_data(request):
                 [user.email],
                 fail_silently=False,
             )
-            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': '---'})
+            raspberry_pi.start = False
+            raspberry_pi.save()
+
+            return JsonResponse({'temp': '---', 'humid': '---', 'tof': '---', 'pred': 0})
+
         if len(predictor_obj.height) > 0 and  len(predictor_obj.temp)> 0 and len(predictor_obj.humid) > 0:
             tof, temp, humid = predictor_obj.height[-1], predictor_obj.temp[-1], predictor_obj.humid[-1]
             return JsonResponse({'temp': round(temp, 2), 'humid': round(humid, 2), 'bread_height': round(tof), 'pred': round(predictor_obj.predictTime())})
