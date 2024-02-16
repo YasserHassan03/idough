@@ -410,9 +410,10 @@
         // Function to update time left
         function updateTimeLeft(timeLeft) {
             const timeSpan = document.getElementById('time');
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timeSpan.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            const hours = Math.floor(timeLeft / 60);
+            const minutes = timeLeft % 60;
+            const seconds = timeLeft*60 % 60;
+            timeSpan.innerText = `${hours}:${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             if (timeLeft == 0) {
                 var message = "Your bread is ready!";
                 alert(message && !alertShown);
