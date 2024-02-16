@@ -45,7 +45,7 @@ class BreadPredictor:
             self.timeForecast = 0
             return 0
         else: 
-            return self.ingredientTime #+ 0.2*self.tempWeight() + 0.1*self.humidWeight() 0.01*self.heightWeight()  + 0.69 * 
+            return 0.69 *  self.ingredientTime + 0.2*self.tempWeight() + 0.1*self.humidWeight() + 0.01*self.heightWeight() 
 
     def tempWeight(self):
         curTemp = self.temp[-1]
@@ -67,7 +67,7 @@ class BreadPredictor:
             self.humidWarning = True  # humidity out of range for bread making
             return self.recipeTime  # humidity out of ideal range for bread making doesn't make huge difference
 
-    def heightWeight(self): #fix this u rat
+    def heightWeight(self): 
         curSampleTime = self.sampleTime
         if self.height[0] * self.targetGrowth > self.bowlHeight:
             self.heightWarning = True  # bread is too big for bowl
