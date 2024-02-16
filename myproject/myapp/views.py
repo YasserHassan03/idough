@@ -80,7 +80,7 @@ def sensors(request):
         temperature = request.POST.get('temp')
         humidity = request.POST.get('humid')
         proximity = request.POST.get('tof')
-        # sampling_time = request.POST.get('sampling')
+        sampling_time = float(request.POST.get('sampling'))
         pid = request.POST.get('pid')
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None
@@ -91,7 +91,10 @@ def sensors(request):
         return JsonResponse({'sampling': 10})
         
     if started:
-        map_user_to_object[user].insertData(float(proximity), float(temperature), float(humidity))
+        pred = map_user_to_object[user] 
+        pred.sampleTime = float(sampling_time) / 60
+        pred.insertData(float(proximity), float(temperature), float(humidity))
+         
 
     return JsonResponse({"sampling": 10})
 
@@ -114,7 +117,7 @@ def start(request):
             pid_register(request, raspberry_pi.id)
         raspberry_pi.save()
 
-        map_user_to_object[request.user].recipeTime = float(time)
+        map_user_to_object[request.user].ingredientTime = float(time)
         map_user_to_object[request.user].yeast = float(yeast)
         map_user_to_object[request.user].flour = float(flour)
         map_user_to_object[request.user].salt = float(salt)

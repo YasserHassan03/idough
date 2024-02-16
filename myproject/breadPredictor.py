@@ -26,7 +26,7 @@ class BreadPredictor:
         self.humidWarning = False
         self.heightWarning = False
         self.done = False
-        self.sampleTime = sampleTime/60  # in minutes
+        self.sampleTime = sampleTime / 60  # in minutes
 
     def getWarning(self):
         return self.tempWarning, self.humidWarning, self.heightWarning
@@ -44,8 +44,7 @@ class BreadPredictor:
         if self.done: 
             self.timeForecast = 0
         else: 
-            self.timeForecast = self.ingredientTime #+ 0.2*self.tempWeight() + 0.1*self.humidWeight() 0.01*self.heightWeight()  + 0.69 * 
-        return self.timeForecast
+            return self.ingredientTime #+ 0.2*self.tempWeight() + 0.1*self.humidWeight() 0.01*self.heightWeight()  + 0.69 * 
 
     def tempWeight(self):
         curTemp = self.temp[-1]
@@ -96,6 +95,7 @@ class BreadPredictor:
         self.height.append(self.calulateHeight(distance))
         self.temp.append(temp)
         self.humid.append(humid)
+        print(f"ingTIme: {self.ingredientTime}, smpTime = {self.sampleTime}")
         self.ingredientTime -= self.sampleTime
         if self.ingredientTime <= 0:
             self.done = True
