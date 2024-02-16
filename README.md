@@ -1,16 +1,23 @@
-# Bread_box
-Introducing our state-of-the-art IoT Bread Proving Box, a revolutionary device designed to elevate your home baking experience to new heights. This intelligent and connected proving box seamlessly blends traditional artisanal bread-making with cutting-edge technology.  
+# iDough
 
-Plan-
+Welcome to our state-of-the-art IoT Bread Proving Box, a revolutionary device designed to elevate your home baking experience to new heights. This intelligent and connected proving box seamlessly blends traditional artisanal bread-making with cutting-edge technology.
 
-Yasser -gay marketing website (now) with 2 min promo video (later)
+## Contributors
 
-Yazan - React app/website for now (UI) with fake data - AWS? (spec only says for "remote client") consider how to send inputs from react app back to client (for temp control if we get that far)
+- James Taylor
+- Omar Khatib
+- Yasser Hassan
+- Yazan Ayyoub
 
-Omar 
-- [x] Play with temperature/humidity sensor get that to work 
-- [ ] transmission and client-server arrangement
+You can find Raspberry Pi embedded code in the dedicated `rpi` directory.
 
-James - Look out bread specific stuff (type of bread, target humidity, temp, how these affect rate for prediction) find suitable sensor and test (ultrasound vs TOF) - consider heating element for temperature control.
+You can find the dynamic backend/frontend of our user application and the sophisticated bread-related algorithms in the `myproject` directory.
 
-- [ ] Figure out what the network will look like with (aws/firebase/whatever we wanna use), website and rp and assign them to ppl.
+To run the application locally, first install Django, then navigate to the `myproject` directory and run `python3 manage.py runserver`.
+
+Please visit our marketing website [here](https://ya9218.wixsite.com/idough)!
+
+The Django web application runs on an EC2 instance on AWS. The application is fully functional with an error page and an integrated email API, which sends the user an email once the bread is done proving.
+
+Thanks!
+
