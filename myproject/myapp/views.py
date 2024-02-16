@@ -80,7 +80,7 @@ def sensors(request):
         temperature = request.POST.get('temp')
         humidity = request.POST.get('humid')
         proximity = request.POST.get('tof')
-        sampling_time = float(request.POST.get('sampling'))
+        sampling_time = request.POST.get('sampling')
         pid = request.POST.get('pid')
         raspberry_pi = RaspberryPi.objects.get(id=pid)
         user = raspberry_pi.user if raspberry_pi else None

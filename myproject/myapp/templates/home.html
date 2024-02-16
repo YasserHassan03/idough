@@ -413,7 +413,7 @@
             const hours = Math.floor(timeLeft / 60);
             const minutes = timeLeft % 60;
             const seconds = timeLeft*60 % 60;
-            timeSpan.innerText = `${hours}:${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timeSpan.innerText = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
             if (timeLeft == 0) {
                 var message = "Your bread is ready!";
                 alert(message && !alertShown);
