@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDough - User Login</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            /* Stack items vertically */
+        }
+
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 4vw;
+        }
+
+        .login-form {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            outline: none;
+        }
+
+        .login-form button[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-bottom: 2vw;
+            margin-left: 450px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
+    <div class="login-container">
+        <h2>User Login</h2>
+        <div class="login-form">
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                <p>
+                    <label for="id_username">Username:</label>
+                    {{ form.username }}
+                </p>
+                <p>
+                    <label for="id_password">Password:</label>
+                    {{ form.password }}
+                </p>
+                <button type="submit">Login</button>
+            </form>
+            {% if form.errors %}
+            <div id="errorAlert" style="display: none;">{{ form.errors }}</div>
+            <script>
+                // Show error alert if form has errors
+                var error = "{{ form.errors|escapejs }}";
+                var errorMessage = error.slice(68,158); 
+                alert(errorMessage);
+                console.log(errorMessage);
+            </script>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

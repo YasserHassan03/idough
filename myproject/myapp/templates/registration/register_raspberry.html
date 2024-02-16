@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Register Raspberry Pi</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .registration-container {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            width: 30vw;
+            margin-left: 30%;
+        }
+
+        .registration-form {
+            width: 300px;
+            margin: 50px auto; /* Added more margin-top */
+        }
+
+        .registration-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+            text-align: left;
+        }
+
+        .registration-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            outline: none;
+        }
+
+        .registration-form input[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .registration-form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .registration-form label {
+            text-align: center; /* Center align the labels */
+        }
+        .image img {
+            width: 20%;
+            height: auto;
+            margin-bottom: 2vw;
+            margin-left: 450px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div>
+    <div class="image">
+        <img src="{% static 'logo.png' %}">
+    </div>
+    <div class="registration-container">
+        <h1>Register Raspberry Pi</h1>
+        {% if error %}
+        <p><strong>Error:</strong> {{ error }}</p>
+        {% endif %}
+        <div class="registration-form">
+            <form method="post">
+                {% csrf_token %}
+                <label for="raspberry_id">Raspberry Pi ID:</label><br>
+                <input type="text" id="raspberry_id" name="raspberry_id" required><br>
+                <!--label for="microservice_port">Microservice Port:</label><br>
+                <input type="text" id="microservice_port" name="microservice_port" required><br-->
+                <input type="submit" value="Register">
+            </form>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+{% load static %}  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; /* Center elements vertically */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 10vh; /* Move the error message higher */
+            font-size: 6em; /* Increase font size for error message */
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.5em; /* Increase font size for error description */
+            margin-top: 2vh; /* Adjust space between error message and description */
+            color: white !important;
+        }
+
+        .logo img {
+            width: 150px; /* Adjust size as needed */
+            margin-top: 5vh; /* Move the logo higher */
+            margin-bottom: 3vh; /* Add some space below the logo */
+            margin-left: 6vw;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="logo">
+            <img src="{% static 'logo.png' %}" alt="iDough Logo">
+        </div>
+        <h1>Error</h1>
+        <p>A Raspberry Pi is not registered.</p>
+    </div>
+</body>
+</html>
