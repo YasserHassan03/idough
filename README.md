@@ -21,7 +21,7 @@ Thanks!
 
 ## Marketing Video
 
-Our marketing video is found below:
+Our marketing video is found below as well as on the marketing website:
 
 
 https://github.com/J3T21/Bread_box/assets/116260803/0df85187-cac8-4fcb-9e62-56665e42e200
