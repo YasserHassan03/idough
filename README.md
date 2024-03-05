@@ -19,3 +19,12 @@ The Django web application runs on an EC2 instance on AWS. The application is fu
 
 Thanks!
 
+## Marketing Video
+
+Our marketing video is found below:
+
+
+https://github.com/J3T21/Bread_box/assets/116260803/0df85187-cac8-4fcb-9e62-56665e42e200
+
+
+
